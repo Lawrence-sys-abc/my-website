@@ -22,15 +22,6 @@ const article =
 const errorMessage =
     document.getElementById("errorMessage");
 
-const articleCategory =
-    document.getElementById("articleCategory");
-
-const articleTitle =
-    document.getElementById("articleTitle");
-
-const articleDate =
-    document.getElementById("articleDate");
-
 const articleFrame =
     document.getElementById("articleFrame");
 
@@ -49,28 +40,6 @@ const articleId =
 
 
 /* ==========================================
-   日期格式
-========================================== */
-
-function formatDate(date) {
-
-    if (!date) {
-        return "";
-    }
-
-    return new Date(date)
-        .toLocaleDateString(
-            "zh-CN",
-            {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit"
-            }
-        );
-}
-
-
-/* ==========================================
    自动调整 iframe 高度
 ========================================== */
 
@@ -78,39 +47,38 @@ function resizeIframe() {
 
     try {
 
-        const iframeDocument =
+        const doc =
             articleFrame.contentDocument ||
             articleFrame.contentWindow.document;
 
-
-        if (!iframeDocument) {
+        if (!doc) {
             return;
         }
 
+        const bodyHeight =
+            doc.body
+                ? doc.body.scrollHeight
+                : 0;
+
+        const documentHeight =
+            doc.documentElement
+                ? doc.documentElement.scrollHeight
+                : 0;
 
         const height =
             Math.max(
-                iframeDocument.body
-                    ? iframeDocument.body.scrollHeight
-                    : 0,
-
-                iframeDocument.documentElement
-                    ? iframeDocument.documentElement.scrollHeight
-                    : 0
+                bodyHeight,
+                documentHeight,
+                900
             );
 
-
-        if (height > 0) {
-
-            articleFrame.style.height =
-                height + "px";
-
-        }
+        articleFrame.style.height =
+            height + "px";
 
     } catch (error) {
 
         console.warn(
-            "无法自动调整文章高度：",
+            "iframe 高度调整失败：",
             error
         );
 
@@ -120,7 +88,7 @@ function resizeIframe() {
 
 
 /* ==========================================
-   获取文章
+   加载文章
 ========================================== */
 
 async function getArticle() {
@@ -160,14 +128,8 @@ async function getArticle() {
 
         if (!response.ok) {
 
-            console.error(
-                "Supabase HTTP 状态：",
-                response.status
-            );
-
-
             throw new Error(
-                "无法获取文章"
+                `HTTP ${response.status}`
             );
 
         }
@@ -193,41 +155,49 @@ async function getArticle() {
 
 
         /* ======================================
-           填充标题 / 分类 / 日期
+           检查 HTML
         ====================================== */
 
-        articleCategory.textContent =
-            data.category || "";
+        let content =
+            data.content || "";
 
 
-        articleTitle.textContent =
-            data.title || "";
-
-
-        articleDate.textContent =
-            formatDate(
-                data.created_at
-            );
-
-
-        /* ======================================
-           完整 HTML
-           
-           content 是一个完整 HTML 页面
-           
-           不再使用 innerHTML
-           
-           使用 iframe.srcdoc
-        ====================================== */
-
-        if (!data.content) {
+        if (!content.trim()) {
 
             throw new Error(
-                "文章 HTML 内容为空"
+                "文章 HTML 为空"
             );
 
         }
 
+
+        /*
+         * 如果数据库里错误地保存了
+         * Python 代码 + HTML，
+         * 自动从 <!DOCTYPE html> 开始截取。
+         *
+         * 这样可以兼容已经发布的错误内容。
+         */
+
+        const doctypeIndex =
+            content
+                .toLowerCase()
+                .indexOf("<!doctype html>");
+
+
+        if (doctypeIndex > 0) {
+
+            content =
+                content.substring(
+                    doctypeIndex
+                );
+
+        }
+
+
+        /* ======================================
+           设置 iframe
+        ====================================== */
 
         articleFrame.onload =
             function() {
@@ -236,32 +206,37 @@ async function getArticle() {
 
 
                 /*
-                 * 图片加载完成以后，
-                 * 再重新计算一次高度。
+                 * 图片加载完成后重新计算高度
                  */
 
-                const images =
-                    articleFrame
-                        .contentDocument
-                        .images;
+                try {
+
+                    const images =
+                        articleFrame
+                            .contentDocument
+                            .images;
 
 
-                for (
-                    const image of images
-                ) {
+                    for (
+                        const image of images
+                    ) {
 
-                    image.addEventListener(
-                        "load",
-                        resizeIframe
+                        image.addEventListener(
+                            "load",
+                            resizeIframe
+                        );
+
+                    }
+
+                } catch (error) {
+
+                    console.warn(
+                        "图片监听失败：",
+                        error
                     );
 
                 }
 
-
-                /*
-                 * 延迟再计算几次，
-                 * 防止字体 / 图片加载导致高度变化。
-                 */
 
                 setTimeout(
                     resizeIframe,
@@ -282,27 +257,22 @@ async function getArticle() {
 
 
         articleFrame.srcdoc =
-            data.content;
+            content;
 
 
         /* ======================================
-           显示文章
+           显示
         ====================================== */
 
         loading.style.display =
             "none";
 
-
         article.style.display =
             "block";
 
 
-        /* ======================================
-           修改浏览器标题
-        ====================================== */
-
         document.title =
-            `${data.title} - 彭博社 · 创新点子王`;
+            `${data.title || "文章"} - 彭博社 · 创新点子王`;
 
 
     } catch (error) {
@@ -320,7 +290,7 @@ async function getArticle() {
 
 
 /* ==========================================
-   显示错误
+   错误
 ========================================== */
 
 function showError() {
@@ -328,10 +298,8 @@ function showError() {
     loading.style.display =
         "none";
 
-
     article.style.display =
         "none";
-
 
     errorMessage.style.display =
         "block";
