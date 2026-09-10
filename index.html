@@ -1,908 +1,175 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- 网站名称 -->
-    <title>彭博社 - 创新点子王</title>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    <meta name="description"
+        content="彭博社 · 创新点子王 —— 游戏、财经、娱乐新闻">
 
-        body {
-            background: #0f0f0f;
-            color: #fff;
-            font-family: Arial, Helvetica, sans-serif;
-        }
+    <title>彭博社 · 创新点子王</title>
 
-        /* =========================
-           顶部导航
-        ========================= */
-
-        .header {
-            height: 70px;
-            display: flex;
-            align-items: center;
-            padding: 0 28px;
-            border-bottom: 1px solid #252525;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: #0f0f0f;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: 900;
-            white-space: nowrap;
-            margin-right: 35px;
-        }
-
-        .logo span {
-            color: #ff1744;
-        }
-
-        .search {
-            flex: 1;
-            max-width: 650px;
-            display: flex;
-        }
-
-        .search input {
-            width: 100%;
-            height: 42px;
-            background: #121212;
-            border: 1px solid #444;
-            border-radius: 22px 0 0 22px;
-            color: white;
-            padding: 0 20px;
-            font-size: 15px;
-            outline: none;
-        }
-
-        .search button {
-            width: 65px;
-            border: 1px solid #444;
-            border-left: none;
-            border-radius: 0 22px 22px 0;
-            background: #222;
-            color: white;
-            cursor: pointer;
-            font-size: 18px;
-        }
-
-        .header-right {
-            margin-left: auto;
-            display: flex;
-            gap: 18px;
-            align-items: center;
-        }
-
-        .header-btn {
-            color: white;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        .avatar {
-            width: 35px;
-            height: 35px;
-            background: linear-gradient(135deg, #ff1744, #7c4dff);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        /* =========================
-           页面主体
-        ========================= */
-
-        .main {
-            padding: 18px 24px 50px;
-        }
-
-        /* 分类 */
-
-        .categories {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding-bottom: 20px;
-            scrollbar-width: none;
-        }
-
-        .categories::-webkit-scrollbar {
-            display: none;
-        }
-
-        .category {
-            flex-shrink: 0;
-            background: #272727;
-            border-radius: 8px;
-            padding: 8px 15px;
-            font-size: 14px;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: .2s;
-        }
-
-        .category:hover {
-            background: #3b3b3b;
-        }
-
-        .category.active {
-            background: white;
-            color: black;
-            font-weight: bold;
-        }
-
-        /* =========================
-           视频网格
-        ========================= */
-
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 26px 14px;
-        }
-
-        .video-card {
-            min-width: 0;
-            cursor: pointer;
-        }
-
-        .thumbnail {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            border-radius: 10px;
-            overflow: hidden;
-            background: #222;
-        }
-
-        .thumbnail img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform .3s;
-        }
-
-        .video-card:hover .thumbnail img {
-            transform: scale(1.04);
-        }
-
-        .duration {
-            position: absolute;
-            right: 7px;
-            bottom: 7px;
-            background: rgba(0,0,0,.85);
-            padding: 3px 6px;
-            border-radius: 4px;
-            font-size: 12px;
-        }
-
-        .video-info {
-            display: flex;
-            margin-top: 10px;
-        }
-
-        .channel-avatar {
-            width: 36px;
-            height: 36px;
-            flex-shrink: 0;
-            border-radius: 50%;
-            background: linear-gradient(135deg,#ff1744,#ff9800);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: bold;
-            margin-right: 10px;
-        }
-
-        .video-text {
-            min-width: 0;
-        }
-
-        .video-title {
-            font-size: 15px;
-            font-weight: 600;
-            line-height: 1.35;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .video-meta {
-            margin-top: 6px;
-            color: #aaa;
-            font-size: 13px;
-            line-height: 1.4;
-        }
-
-        /* =========================
-           Shorts
-        ========================= */
-
-        .shorts-section {
-            margin-top: 42px;
-        }
-
-        .shorts-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            font-size: 21px;
-            font-weight: bold;
-        }
-
-        .shorts-icon {
-            color: #ff1744;
-            font-size: 25px;
-        }
-
-        .shorts-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 14px;
-        }
-
-        .short-card {
-            cursor: pointer;
-            min-width: 0;
-        }
-
-        .short-thumbnail {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 9 / 16;
-            border-radius: 9px;
-            overflow: hidden;
-            background: #222;
-        }
-
-        .short-thumbnail img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform .3s;
-        }
-
-        .short-card:hover img {
-            transform: scale(1.04);
-        }
-
-        .short-title {
-            margin-top: 9px;
-            font-size: 14px;
-            line-height: 1.35;
-            font-weight: 600;
-
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .short-views {
-            color: #aaa;
-            font-size: 12px;
-            margin-top: 5px;
-        }
-
-        /* =========================
-           手机端
-        ========================= */
-
-        @media (max-width: 1100px) {
-
-            .video-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .shorts-grid {
-                grid-template-columns: repeat(5, 1fr);
-            }
-
-            .logo {
-                margin-right: 20px;
-            }
-        }
-
-        @media (max-width: 800px) {
-
-            .header {
-                padding: 0 15px;
-            }
-
-            .logo {
-                font-size: 19px;
-                margin-right: 15px;
-            }
-
-            .search {
-                display: none;
-            }
-
-            .main {
-                padding: 15px;
-            }
-
-            .video-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 22px 10px;
-            }
-
-            .shorts-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .header-right {
-                gap: 10px;
-            }
-        }
-
-        @media (max-width: 500px) {
-
-            .video-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .shorts-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .header {
-                height: 58px;
-            }
-
-            .logo {
-                font-size: 17px;
-            }
-        }
-
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- =========================
-     顶部
-========================= -->
-
-<header class="header">
-
-    <div class="logo">
-        彭博社 <span>·</span> 创新点子王
-    </div>
-
-    <div class="search">
-        <input
-            type="text"
-            placeholder="搜索视频、创意、新闻..."
-        >
-        <button>⌕</button>
-    </div>
-
-    <div class="header-right">
-        <div class="header-btn">＋ 上传</div>
-        <div class="header-btn">通知</div>
-        <div class="avatar">王</div>
-    </div>
-
-</header>
-
-
-<!-- =========================
-     主体
-========================= -->
-
-<main class="main">
-
-    <!-- 分类 -->
-
-    <div class="categories">
-
-        <div class="category active">全部</div>
-        <div class="category">游戏</div>
-        <div class="category">搞客</div>
-        <div class="category">情景喜剧</div>
-        <div class="category">新闻</div>
-        <div class="category">直播</div>
-        <div class="category">动作冒险游戏</div>
-        <div class="category">足球</div>
-        <div class="category">喜剧短片</div>
-        <div class="category">旅游</div>
-        <div class="category">体育运动类视频游戏</div>
-        <div class="category">烹饪</div>
-        <div class="category">健身</div>
-        <div class="category">最近上传</div>
-        <div class="category">发现新视频</div>
-
-    </div>
-
-
     <!-- =========================
-         普通视频
-    ========================= -->
+         顶部
+    ========================== -->
 
-    <section class="video-grid">
+    <header class="site-header">
 
-        <!-- 视频 1 -->
+        <div class="header-inner">
 
-        <article class="video-card">
+            <a href="index.html" class="logo">
+                彭博社 · 创新点子王
+            </a>
 
-            <div class="thumbnail">
-                <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80">
+            <div class="header-right">
 
-                <span class="duration">12:35</span>
-            </div>
+                <div class="search-box">
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="搜索新闻..."
+                    >
 
-            <div class="video-info">
-
-                <div class="channel-avatar">创</div>
-
-                <div class="video-text">
-
-                    <div class="video-title">
-                        未来科技正在改变我们的生活，这些创新你见过吗？
-                    </div>
-
-                    <div class="video-meta">
-                        创新点子王<br>
-                        128万次观看 · 2天前
-                    </div>
-
+                    <button id="searchButton">
+                        搜索
+                    </button>
                 </div>
 
             </div>
-
-        </article>
-
-
-        <!-- 视频 2 -->
-
-        <article class="video-card">
-
-            <div class="thumbnail">
-
-                <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1200&q=80">
-
-                <span class="duration">26:14</span>
-
-            </div>
-
-            <div class="video-info">
-
-                <div class="channel-avatar">科</div>
-
-                <div class="video-text">
-
-                    <div class="video-title">
-                        AI到底还能做到什么？未来十年可能发生的事情
-                    </div>
-
-                    <div class="video-meta">
-                        科技观察<br>
-                        283万次观看 · 9个月前
-                    </div>
-
-                </div>
-
-            </div>
-
-        </article>
-
-
-        <!-- 视频 3 -->
-
-        <article class="video-card">
-
-            <div class="thumbnail">
-
-                <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=80">
-
-                <span class="duration">28:50</span>
-
-            </div>
-
-            <div class="video-info">
-
-                <div class="channel-avatar">商</div>
-
-                <div class="video-text">
-
-                    <div class="video-title">
-                        这个年轻人的创业方式，正在改变传统商业
-                    </div>
-
-                    <div class="video-meta">
-                        商业新视野<br>
-                        181万次观看 · 5天前
-                    </div>
-
-                </div>
-
-            </div>
-
-        </article>
-
-
-        <!-- 视频 4 -->
-
-        <article class="video-card">
-
-            <div class="thumbnail">
-
-                <img src="https://images.unsplash.com/photo-1495020689067-958852a7765e?auto=format&fit=crop&w=1200&q=80">
-
-                <span class="duration">19:51</span>
-
-            </div>
-
-            <div class="video-info">
-
-                <div class="channel-avatar">新</div>
-
-                <div class="video-text">
-
-                    <div class="video-title">
-                        全球正在发生什么？本周最值得关注的新闻
-                    </div>
-
-                    <div class="video-meta">
-                        彭博社 · 创新点子王<br>
-                        330万次观看 · 1个月前
-                    </div>
-
-                </div>
-
-            </div>
-
-        </article>
-
-
-        <!-- 视频 5 -->
-
-        <article class="video-card">
-
-            <div class="thumbnail">
-
-                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80">
-
-                <span class="duration">15:22</span>
-
-            </div>
-
-            <div class="video-info">
-
-                <div class="channel-avatar">I</div>
-
-                <div class="video-text">
-
-                    <div class="video-title">
-                        一个普通人如何利用互联网创造自己的事业？
-                    </div>
-
-                    <div class="video-meta">
-                        创业实验室<br>
-                        96万次观看 · 3天前
-                    </div>
-
-                </div>
-
-            </div>
-
-        </article>
-
-
-        <!-- 视频 6 -->
-
-        <article class="video-card">
-
-            <div class="thumbnail">
-
-                <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80">
-
-                <span class="duration">21:43</span>
-
-            </div>
-
-            <div class="video-info">
-
-                <div class="channel-avatar">王</div>
-
-                <div class="video-text">
-
-                    <div class="video-title">
-                        100个年轻人的疯狂创业想法，你觉得哪个最有潜力？
-                    </div>
-
-                    <div class="video-meta">
-                        创新点子王<br>
-                        75万次观看 · 1周前
-                    </div>
-
-                </div>
-
-            </div>
-
-        </article>
-
-
-        <!-- 视频 7 -->
-
-        <article class="video-card">
-
-            <div class="thumbnail">
-
-                <img src="https://images.unsplash.com/photo-1492724441997-5dc865305da7?auto=format&fit=crop&w=1200&q=80">
-
-                <span class="duration">10:08</span>
-
-            </div>
-
-            <div class="video-info">
-
-                <div class="channel-avatar">旅</div>
-
-                <div class="video-text">
-
-                    <div class="video-title">
-                        世界上最值得去的10个地方
-                    </div>
-
-                    <div class="video-meta">
-                        环球发现<br>
-                        52万次观看 · 2周前
-                    </div>
-
-                </div>
-
-            </div>
-
-        </article>
-
-
-        <!-- 视频 8 -->
-
-        <article class="video-card">
-
-            <div class="thumbnail">
-
-                <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80">
-
-                <span class="duration">18:30</span>
-
-            </div>
-
-            <div class="video-info">
-
-                <div class="channel-avatar">商</div>
-
-                <div class="video-text">
-
-                    <div class="video-title">
-                        为什么有些小公司能够击败行业巨头？
-                    </div>
-
-                    <div class="video-meta">
-                        商业思维<br>
-                        64万次观看 · 4天前
-                    </div>
-
-                </div>
-
-            </div>
-
-        </article>
-
-    </section>
-
-
-    <!-- =========================
-         Shorts
-    ========================= -->
-
-    <section class="shorts-section">
-
-        <div class="shorts-title">
-
-            <span class="shorts-icon">⚡</span>
-
-            Shorts
 
         </div>
 
-
-        <div class="shorts-grid">
-
-
-            <article class="short-card">
-
-                <div class="short-thumbnail">
-
-                    <img src="https://images.unsplash.com/photo-1519052537078-e6302a4968d4?auto=format&fit=crop&w=700&q=80">
-
-                </div>
-
-                <div class="short-title">
-                    这只猫居然学会了人类的动作
-                </div>
-
-                <div class="short-views">
-                    305万次观看
-                </div>
-
-            </article>
+    </header>
 
 
-            <article class="short-card">
+    <!-- =========================
+         分类导航
+    ========================== -->
 
-                <div class="short-thumbnail">
+    <nav class="category-nav">
 
-                    <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=700&q=80">
+        <div class="category-inner">
 
-                </div>
+            <button
+                class="category-button active"
+                data-category="全部">
+                全部
+            </button>
 
-                <div class="short-title">
-                    这个挑战看起来简单，真正做起来太难了
-                </div>
+            <button
+                class="category-button"
+                data-category="游戏">
+                游戏
+            </button>
 
-                <div class="short-views">
-                    239万次观看
-                </div>
+            <button
+                class="category-button"
+                data-category="财经">
+                财经
+            </button>
 
-            </article>
-
-
-            <article class="short-card">
-
-                <div class="short-thumbnail">
-
-                    <img src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=700&q=80">
-
-                </div>
-
-                <div class="short-title">
-                    一个改变人生的小创意
-                </div>
-
-                <div class="short-views">
-                    171万次观看
-                </div>
-
-            </article>
-
-
-            <article class="short-card">
-
-                <div class="short-thumbnail">
-
-                    <img src="https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=700&q=80">
-
-                </div>
-
-                <div class="short-title">
-                    为什么这个东西突然火遍全球？
-                </div>
-
-                <div class="short-views">
-                    152万次观看
-                </div>
-
-            </article>
-
-
-            <article class="short-card">
-
-                <div class="short-thumbnail">
-
-                    <img src="https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=700&q=80">
-
-                </div>
-
-                <div class="short-title">
-                    年轻人正在创造一种全新的生活方式
-                </div>
-
-                <div class="short-views">
-                    128万次观看
-                </div>
-
-            </article>
-
-
-            <article class="short-card">
-
-                <div class="short-thumbnail">
-
-                    <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=700&q=80">
-
-                </div>
-
-                <div class="short-title">
-                    世界上最暖心的一幕
-                </div>
-
-                <div class="short-views">
-                    342万次观看
-                </div>
-
-            </article>
-
+            <button
+                class="category-button"
+                data-category="娱乐">
+                娱乐
+            </button>
 
         </div>
 
-    </section>
-
-</main>
+    </nav>
 
 
-<script>
+    <!-- =========================
+         主内容
+    ========================== -->
 
-    // 分类按钮点击效果
+    <main class="main-container">
 
-    const categories = document.querySelectorAll(".category");
+        <!-- 页面标题 -->
 
-    categories.forEach(category => {
+        <section class="page-heading">
 
-        category.addEventListener("click", () => {
+            <div>
+                <p class="small-heading">
+                    LATEST NEWS
+                </p>
 
-            categories.forEach(item => {
-                item.classList.remove("active");
-            });
+                <h1 id="pageTitle">
+                    最新资讯
+                </h1>
+            </div>
 
-            category.classList.add("active");
+            <p class="news-count">
+                共 <span id="newsCount">0</span> 条
+            </p>
 
-        });
-
-    });
-
-
-    // 搜索功能
-
-    const searchInput = document.querySelector(".search input");
-
-    searchInput.addEventListener("keydown", function(event) {
-
-        if (event.key === "Enter") {
-
-            const keyword = this.value.trim();
-
-            if (keyword) {
-                alert("正在搜索：" + keyword);
-            }
-
-        }
-
-    });
+        </section>
 
 
-    // 视频点击
+        <!-- =========================
+             新闻区域
+        ========================== -->
 
-    const cards = document.querySelectorAll(".video-card, .short-card");
+        <section
+            id="newsGrid"
+            class="news-grid">
 
-    cards.forEach(card => {
+            <!-- JavaScript 会自动生成新闻 -->
 
-        card.addEventListener("click", () => {
+        </section>
 
-            alert("这里以后可以跳转到视频播放页面");
 
-        });
+        <!-- 没有搜索结果 -->
 
-    });
+        <div
+            id="emptyMessage"
+            class="empty-message">
 
-</script>
+            <h2>没有找到相关新闻</h2>
+
+            <p>
+                尝试更换关键词或者选择其他分类。
+            </p>
+
+        </div>
+
+    </main>
+
+
+    <!-- =========================
+         页脚
+    ========================== -->
+
+    <footer class="site-footer">
+
+        <div class="footer-inner">
+
+            <div>
+                <strong>彭博社 · 创新点子王</strong>
+                <p>
+                    游戏 · 财经 · 娱乐
+                </p>
+            </div>
+
+            <div class="footer-copy">
+                © 2026 Innovation Ideas
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <script src="script.js"></script>
 
 </body>
+
 </html>
