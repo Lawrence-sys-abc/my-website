@@ -3,10 +3,10 @@
 ========================================== */
 
 const SUPABASE_URL =
-    "你的_SUPABASE_URL";
+    "https://lyfdqypsivxthrydwktx.supabase.co";
 
 const SUPABASE_ANON_KEY =
-    "你的_SUPABASE_ANON_KEY";
+    "sb_publishable_HkdrJ0FOLBNQ2jDqVuzfHw_zAeJlhEb";
 
 
 /* ==========================================
@@ -64,13 +64,19 @@ async function getNews() {
 
     try {
 
+        /* ======================================
+           从 articles 表获取文章
+        ====================================== */
+
         let url =
-            `${SUPABASE_URL}/rest/v1/news` +
-            `?select=*` +
+            `${SUPABASE_URL}/rest/v1/articles` +
+            `?select=id,created_at,title,category,cover_image,content` +
             `&order=created_at.desc`;
 
 
-        /* 分类 */
+        /* ======================================
+           分类筛选
+        ====================================== */
 
         if (currentCategory !== "全部") {
 
@@ -82,7 +88,9 @@ async function getNews() {
         }
 
 
-        /* 搜索 */
+        /* ======================================
+           搜索标题
+        ====================================== */
 
         if (currentSearch !== "") {
 
@@ -93,6 +101,10 @@ async function getNews() {
 
         }
 
+
+        /* ======================================
+           请求 Supabase
+        ====================================== */
 
         const response =
             await fetch(
@@ -115,6 +127,14 @@ async function getNews() {
 
         if (!response.ok) {
 
+            const errorText =
+                await response.text();
+
+            console.error(
+                "Supabase 错误：",
+                errorText
+            );
+
             throw new Error(
                 "无法获取新闻"
             );
@@ -126,12 +146,20 @@ async function getNews() {
             await response.json();
 
 
+        /* ======================================
+           加载完成
+        ====================================== */
+
         loading.style.display = "none";
 
 
         newsCount.textContent =
             news.length;
 
+
+        /* ======================================
+           没有新闻
+        ====================================== */
 
         if (news.length === 0) {
 
@@ -142,6 +170,10 @@ async function getNews() {
 
         }
 
+
+        /* ======================================
+           创建新闻卡片
+        ====================================== */
 
         news.forEach(
             (item, index) => {
@@ -158,6 +190,7 @@ async function getNews() {
     } catch (error) {
 
         loading.style.display = "none";
+
 
         newsGrid.innerHTML = `
 
@@ -179,7 +212,11 @@ async function getNews() {
 
         `;
 
-        console.error(error);
+
+        console.error(
+            "获取新闻失败：",
+            error
+        );
 
     }
 
@@ -203,6 +240,10 @@ function createNewsCard(
         "news-card";
 
 
+    /* ======================================
+       第一篇文章作为 Featured
+    ====================================== */
+
     if (
         index === 0 &&
         currentCategory === "全部" &&
@@ -216,55 +257,80 @@ function createNewsCard(
     }
 
 
+    /* ======================================
+       创建图片
+    ====================================== */
+
+    let imageHTML = "";
+
+
+    if (news.cover_image) {
+
+        imageHTML = `
+
+            <div class="news-image-wrapper">
+
+                <img
+                    src="${escapeAttribute(
+                        news.cover_image
+                    )}"
+                    alt="${escapeAttribute(
+                        news.title
+                    )}"
+                    class="news-image"
+                    loading="lazy"
+                >
+
+            </div>
+
+        `;
+
+    } else {
+
+        /* 没有图片时显示占位 */
+
+        imageHTML = `
+
+            <div class="news-image-wrapper no-image">
+
+                <div class="no-image-text">
+                    暂无图片
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+
+    /* ======================================
+       新闻卡片 HTML
+    ====================================== */
+
     card.innerHTML = `
 
-        <a
-            href="${news.link}"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="news-image-link"
-        >
-
-            <img
-                src="${news.image_url}"
-                alt="${escapeHTML(
-                    news.title
-                )}"
-                class="news-image"
-                loading="lazy"
-            >
-
-        </a>
+        ${imageHTML}
 
 
         <div class="news-info">
 
             <span class="news-category">
+
                 ${escapeHTML(
                     news.category
                 )}
+
             </span>
 
 
-            <a
-                href="${news.link}"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="news-title"
-            >
+            <h2 class="news-title">
+
                 ${escapeHTML(
                     news.title
                 )}
-            </a>
 
-
-            <p class="news-description">
-
-                ${escapeHTML(
-                    news.description || ""
-                )}
-
-            </p>
+            </h2>
 
 
             <time class="news-date">
@@ -280,7 +346,32 @@ function createNewsCard(
     `;
 
 
-    newsGrid.appendChild(card);
+    /* ======================================
+       点击新闻卡片
+       
+       暂时使用文章 ID
+       后面我们可以制作文章详情页
+    ====================================== */
+
+    card.style.cursor = "pointer";
+
+
+    card.addEventListener(
+        "click",
+        () => {
+
+            console.log(
+                "点击文章：",
+                news.id
+            );
+
+        }
+    );
+
+
+    newsGrid.appendChild(
+        card
+    );
 
 }
 
@@ -303,18 +394,62 @@ function escapeHTML(text) {
 
 
 /* ==========================================
-   日期
+   防止 HTML 属性注入
+========================================== */
+
+function escapeAttribute(text) {
+
+    return String(
+        text || ""
+    )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        );
+
+}
+
+
+/* ==========================================
+   日期格式
 ========================================== */
 
 function formatDate(date) {
+
+    if (!date) {
+
+        return "";
+
+    }
+
 
     return new Date(date)
         .toLocaleDateString(
             "zh-CN",
             {
+
                 year: "numeric",
+
                 month: "2-digit",
+
                 day: "2-digit"
+
             }
         );
 
@@ -336,6 +471,10 @@ categoryButtons.forEach(
                     button.dataset.category;
 
 
+                /* ==========================
+                   更新按钮状态
+                ========================== */
+
                 categoryButtons.forEach(
                     item => {
 
@@ -352,11 +491,19 @@ categoryButtons.forEach(
                 );
 
 
+                /* ==========================
+                   更新页面标题
+                ========================== */
+
                 pageTitle.textContent =
                     currentCategory === "全部"
                         ? "最新资讯"
                         : `${currentCategory}资讯`;
 
+
+                /* ==========================
+                   重新获取新闻
+                ========================== */
 
                 getNews();
 
