@@ -1,18 +1,12 @@
-/* =========================
-   基础设置
-========================= */
-
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-html {
-    scroll-behavior: smooth;
-}
 
 body {
+
     font-family:
         Arial,
         "Helvetica Neue",
@@ -21,6 +15,7 @@ body {
         sans-serif;
 
     background: #f7f7f5;
+
     color: #111;
 
     line-height: 1.6;
@@ -28,45 +23,49 @@ body {
 
 
 /* =========================
-   顶部 Header
+   Header
 ========================= */
 
 .site-header {
-    width: 100%;
 
-    background: #ffffff;
+    background: #fff;
 
-    border-bottom: 1px solid #dedede;
+    border-bottom:
+        1px solid #ddd;
 
     position: sticky;
+
     top: 0;
 
     z-index: 100;
+
 }
 
+
 .header-inner {
+
     max-width: 1400px;
 
-    margin: 0 auto;
+    margin: auto;
 
     padding: 22px 40px;
 
     display: flex;
 
-    align-items: center;
-
     justify-content: space-between;
 
+    align-items: center;
+
     gap: 30px;
+
 }
 
 
-/* Logo */
-
 .logo {
-    text-decoration: none;
 
     color: #111;
+
+    text-decoration: none;
 
     font-size: 28px;
 
@@ -74,30 +73,30 @@ body {
 
     letter-spacing: -1px;
 
-    white-space: nowrap;
-}
-
-.logo:hover {
-    opacity: 0.7;
 }
 
 
 /* =========================
-   搜索框
+   Search
 ========================= */
 
 .search-box {
+
     display: flex;
 
     height: 40px;
 
-    border: 1px solid #cfcfcf;
+    border:
+        1px solid #ccc;
 
-    background: white;
+    background: #fff;
+
 }
 
+
 .search-box input {
-    width: 210px;
+
+    width: 220px;
 
     border: none;
 
@@ -107,60 +106,63 @@ body {
 
     font-size: 14px;
 
-    background: transparent;
 }
 
+
 .search-box button {
+
     border: none;
 
-    border-left: 1px solid #d5d5d5;
-
-    padding: 0 16px;
+    border-left:
+        1px solid #ddd;
 
     background: #111;
 
     color: white;
 
+    padding: 0 18px;
+
     cursor: pointer;
 
-    font-size: 13px;
-}
-
-.search-box button:hover {
-    background: #333;
 }
 
 
 /* =========================
-   分类导航
+   分类
 ========================= */
 
 .category-nav {
-    background: #ffffff;
 
-    border-bottom: 1px solid #dedede;
+    background: #fff;
+
+    border-bottom:
+        1px solid #ddd;
+
 }
 
+
 .category-inner {
+
     max-width: 1400px;
 
-    margin: 0 auto;
+    margin: auto;
 
     padding: 0 40px;
 
+    height: 58px;
+
     display: flex;
+
+    align-items: center;
 
     gap: 36px;
 
-    height: 58px;
-
-    align-items: center;
 }
 
-.category-button {
-    height: 58px;
 
-    padding: 0;
+.category-button {
+
+    height: 58px;
 
     border: none;
 
@@ -168,39 +170,40 @@ body {
 
     color: #777;
 
+    cursor: pointer;
+
     font-size: 15px;
 
     font-weight: 600;
 
-    cursor: pointer;
-
     position: relative;
 
-    transition: color 0.2s ease;
 }
 
-.category-button:hover {
-    color: #111;
-}
 
 .category-button.active {
+
     color: #111;
+
 }
 
+
 .category-button.active::after {
+
     content: "";
 
     position: absolute;
+
+    bottom: 0;
 
     left: 0;
 
     right: 0;
 
-    bottom: 0;
-
     height: 3px;
 
     background: #111;
+
 }
 
 
@@ -209,62 +212,61 @@ body {
 ========================= */
 
 .main-container {
+
     max-width: 1400px;
 
-    margin: 0 auto;
+    margin: auto;
 
-    padding: 55px 40px 80px;
+    padding:
+        55px 40px 80px;
+
 }
 
 
-/* =========================
-   页面标题
-========================= */
-
 .page-heading {
+
     display: flex;
 
     justify-content: space-between;
 
     align-items: end;
 
-    border-bottom: 2px solid #111;
+    border-bottom:
+        2px solid #111;
 
     padding-bottom: 18px;
 
     margin-bottom: 30px;
+
 }
 
+
 .small-heading {
+
     font-size: 11px;
-
-    font-weight: 700;
-
-    letter-spacing: 2px;
 
     color: #777;
 
-    margin-bottom: 5px;
+    letter-spacing: 2px;
+
 }
 
+
 .page-heading h1 {
+
     font-size: 36px;
 
     line-height: 1.1;
 
-    letter-spacing: -1px;
 }
 
+
 .news-count {
+
     font-size: 13px;
 
     color: #777;
-}
 
-.news-count span {
-    color: #111;
-
-    font-weight: 700;
 }
 
 
@@ -273,12 +275,14 @@ body {
 ========================= */
 
 .news-grid {
+
     display: grid;
 
     grid-template-columns:
         repeat(3, 1fr);
 
     gap: 45px 28px;
+
 }
 
 
@@ -287,25 +291,29 @@ body {
 ========================= */
 
 .news-card {
+
     min-width: 0;
+
 }
 
 
-/* 图片 */
-
 .news-image-link {
+
     display: block;
 
     width: 100%;
+
+    aspect-ratio: 16 / 10;
 
     overflow: hidden;
 
     background: #ddd;
 
-    aspect-ratio: 16 / 10;
 }
 
+
 .news-image {
+
     width: 100%;
 
     height: 100%;
@@ -315,44 +323,41 @@ body {
     display: block;
 
     transition:
-        transform 0.45s ease,
-        opacity 0.3s ease;
-}
+        transform .45s ease;
 
-.news-image-link:hover .news-image {
-    transform: scale(1.04);
-
-    opacity: 0.9;
 }
 
 
-/* 新闻信息 */
+.news-image-link:hover
+.news-image {
+
+    transform: scale(1.05);
+
+}
+
 
 .news-info {
+
     padding-top: 14px;
+
 }
 
 
-/* 分类 */
-
 .news-category {
-    display: inline-block;
 
     font-size: 11px;
 
     font-weight: 700;
 
+    color: #777;
+
     letter-spacing: 1px;
 
-    margin-bottom: 7px;
-
-    color: #666;
 }
 
 
-/* 标题 */
-
 .news-title {
+
     display: block;
 
     color: #111;
@@ -361,107 +366,137 @@ body {
 
     font-size: 21px;
 
-    line-height: 1.35;
-
     font-weight: 700;
 
-    letter-spacing: -0.4px;
+    line-height: 1.35;
 
-    margin-bottom: 9px;
+    margin-top: 6px;
+
 }
+
 
 .news-title:hover {
+
     text-decoration: underline;
+
 }
 
 
-/* 摘要 */
-
 .news-description {
+
     color: #666;
 
     font-size: 14px;
 
-    line-height: 1.7;
+    margin-top: 8px;
 
-    margin-bottom: 10px;
 }
 
 
-/* 日期 */
-
 .news-date {
-    font-size: 11px;
+
+    display: block;
 
     color: #999;
 
-    letter-spacing: 0.3px;
+    font-size: 11px;
+
+    margin-top: 10px;
+
 }
 
 
 /* =========================
-   第一篇新闻
-   做成大卡片
+   第一篇大新闻
 ========================= */
 
 .news-card.featured {
+
     grid-column: span 2;
 
-    grid-row: span 2;
 }
 
-.news-card.featured .news-image-link {
+
+.news-card.featured
+.news-image-link {
+
     aspect-ratio: 16 / 9;
+
 }
 
-.news-card.featured .news-title {
+
+.news-card.featured
+.news-title {
+
     font-size: 30px;
 
-    line-height: 1.25;
 }
 
 
 /* =========================
-   空结果
+   Loading
+========================= */
+
+.loading {
+
+    text-align: center;
+
+    padding: 80px;
+
+    color: #777;
+
+}
+
+
+/* =========================
+   Empty
 ========================= */
 
 .empty-message {
+
     display: none;
 
     text-align: center;
 
     padding: 100px 20px;
 
-    color: #666;
 }
 
+
 .empty-message h2 {
-    color: #111;
 
     font-size: 24px;
 
-    margin-bottom: 8px;
 }
 
+
 .empty-message p {
-    font-size: 14px;
+
+    color: #777;
+
+    margin-top: 8px;
+
 }
 
 
 /* =========================
-   页脚
+   Footer
 ========================= */
 
 .site-footer {
+
     background: #111;
 
     color: white;
+
 }
 
+
 .footer-inner {
+
     max-width: 1400px;
 
-    margin: 0 auto;
+    margin: auto;
 
     padding: 45px 40px;
 
@@ -469,52 +504,23 @@ body {
 
     justify-content: space-between;
 
-    gap: 30px;
 }
 
-.footer-inner strong {
-    font-size: 18px;
-}
 
 .footer-inner p {
+
     color: #999;
 
     font-size: 13px;
 
-    margin-top: 5px;
 }
 
+
 .footer-copy {
+
     color: #777;
 
     font-size: 12px;
-
-    align-self: end;
-}
-
-
-/* =========================
-   平板
-========================= */
-
-@media (max-width: 1000px) {
-
-    .news-grid {
-        grid-template-columns:
-            repeat(2, 1fr);
-    }
-
-    .news-card.featured {
-        grid-column: span 2;
-    }
-
-    .header-inner,
-    .category-inner,
-    .main-container,
-    .footer-inner {
-        padding-left: 25px;
-        padding-right: 25px;
-    }
 
 }
 
@@ -523,98 +529,97 @@ body {
    手机
 ========================= */
 
+@media (max-width: 900px) {
+
+    .news-grid {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+}
+
+
 @media (max-width: 650px) {
 
     .header-inner {
-        padding-top: 16px;
-        padding-bottom: 16px;
-
-        align-items: flex-start;
 
         flex-direction: column;
 
-        gap: 14px;
+        align-items: stretch;
+
+        padding: 18px 20px;
+
     }
+
 
     .logo {
+
         font-size: 23px;
+
     }
 
-    .header-right {
-        width: 100%;
-    }
-
-    .search-box {
-        width: 100%;
-    }
 
     .search-box input {
+
         flex: 1;
 
         width: auto;
+
     }
 
 
     .category-inner {
-        padding-left: 20px;
-        padding-right: 20px;
+
+        padding: 0 20px;
 
         gap: 25px;
 
         overflow-x: auto;
-    }
 
-    .category-button {
-        flex-shrink: 0;
     }
 
 
     .main-container {
+
         padding:
             35px 20px 60px;
-    }
 
-
-    .page-heading {
-        align-items: flex-end;
-    }
-
-    .page-heading h1 {
-        font-size: 28px;
     }
 
 
     .news-grid {
+
         grid-template-columns: 1fr;
 
-        gap: 38px;
     }
+
 
     .news-card.featured {
+
         grid-column: span 1;
 
-        grid-row: auto;
-    }
-
-    .news-card.featured .news-title {
-        font-size: 25px;
     }
 
 
+    .news-card.featured
     .news-title {
-        font-size: 19px;
+
+        font-size: 25px;
+
     }
 
 
     .footer-inner {
+
         padding:
             35px 20px;
 
         flex-direction: column;
-    }
 
-    .footer-copy {
-        align-self: auto;
+        gap: 20px;
+
     }
 
 }
