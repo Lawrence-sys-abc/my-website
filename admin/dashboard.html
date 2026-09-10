@@ -1,1 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>管理后台 - Bloomberg New</title>
+
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+    <div class="admin-container">
+
+        <div class="dashboard-box">
+
+            <div class="dashboard-header">
+
+                <div>
+                    <h1>Bloomberg New</h1>
+                    <p>文章管理后台</p>
+                </div>
+
+                <button id="logout-button">
+                    退出登录
+                </button>
+
+            </div>
+
+
+            <div class="dashboard-content">
+
+                <h2>发布文章</h2>
+
+                <form id="article-form">
+
+                    <div class="form-group">
+
+                        <label for="title">
+                            标题
+                        </label>
+
+                        <input
+                            type="text"
+                            id="title"
+                            placeholder="请输入文章标题"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="category">
+                            分类
+                        </label>
+
+                        <select id="category" required>
+
+                            <option value="">
+                                请选择分类
+                            </option>
+
+                            <option value="游戏">
+                                游戏
+                            </option>
+
+                            <option value="财经">
+                                财经
+                            </option>
+
+                            <option value="娱乐">
+                                娱乐
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="cover_image">
+                            封面图片
+                        </label>
+
+                        <input
+                            type="text"
+                            id="cover_image"
+                            placeholder="请输入图片地址"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="content">
+                            文章正文（HTML）
+                        </label>
+
+                        <textarea
+                            id="content"
+                            rows="20"
+                            placeholder="<p>在这里输入 HTML 正文...</p>"
+                            required
+                        ></textarea>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        id="publish-button"
+                    >
+                        发布文章
+                    </button>
+
+
+                    <p id="publish-message"></p>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script type="module" src="admin.js"></script>
+
+</body>
+
+</html>
