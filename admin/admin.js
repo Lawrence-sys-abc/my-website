@@ -1,16 +1,19 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
+
 // ==============================
 // Supabase 配置
 // ==============================
 
-const SUPABASE_URL = "https://lyfdqypsivxthrydwktx.supabase.co";
+const SUPABASE_URL =
+    "https://lyfdqypsivxthrydwktx.supabase.co";
 
 const SUPABASE_ANON_KEY =
     "sb_publishable_HkdrJ0FOLBNQ2jDqVuzfHw_zAeJlhEb";
 
 const ADMIN_UID =
     "adc53a79-71b3-4db6-800c-6f96aee5f304";
+
 
 const supabase = createClient(
     SUPABASE_URL,
@@ -24,17 +27,26 @@ const supabase = createClient(
 
 async function checkAdmin() {
 
-    const { data, error } =
-        await supabase.auth.getUser();
+    const {
+        data: { user },
+        error
+    } = await supabase.auth.getUser();
 
-    if (error || !data.user) {
+
+    if (error || !user) {
+
+        console.log("没有登录用户");
 
         window.location.href = "index.html";
 
         return null;
     }
 
-    if (data.user.id !== ADMIN_UID) {
+
+    console.log("当前登录 UID：", user.id);
+
+
+    if (user.id !== ADMIN_UID) {
 
         await supabase.auth.signOut();
 
@@ -45,7 +57,8 @@ async function checkAdmin() {
         return null;
     }
 
-    return data.user;
+
+    return user;
 }
 
 
@@ -56,78 +69,139 @@ async function checkAdmin() {
 const loginForm =
     document.getElementById("login-form");
 
+
 if (loginForm) {
 
-    loginForm.addEventListener("submit", async (event) => {
+    loginForm.addEventListener(
+        "submit",
+        async (event) => {
 
-        event.preventDefault();
-
-        const email =
-            document.getElementById("email").value.trim();
-
-        const password =
-            document.getElementById("password").value;
-
-        const loginButton =
-            document.getElementById("login-button");
-
-        const loginMessage =
-            document.getElementById("login-message");
+            event.preventDefault();
 
 
-        loginButton.disabled = true;
-        loginButton.textContent = "登录中...";
-        loginMessage.textContent = "";
+            const email =
+                document
+                    .getElementById("email")
+                    .value
+                    .trim();
 
 
-        const { data, error } =
-            await supabase.auth.signInWithPassword({
-
-                email: email,
-                password: password
-
-            });
+            const password =
+                document
+                    .getElementById("password")
+                    .value;
 
 
-        if (error) {
+            const loginButton =
+                document
+                    .getElementById("login-button");
 
-            console.error(error);
+
+            const loginMessage =
+                document
+                    .getElementById("login-message");
+
+
+            loginButton.disabled = true;
+
+            loginButton.textContent =
+                "登录中...";
+
+            loginMessage.textContent = "";
+
+
+            // ==============================
+            // Supabase 登录
+            // ==============================
+
+            const {
+                data,
+                error
+            } =
+                await supabase.auth.signInWithPassword({
+
+                    email: email,
+
+                    password: password
+
+                });
+
+
+            // ==============================
+            // 登录失败
+            // ==============================
+
+            if (error) {
+
+                console.error(
+                    "登录错误：",
+                    error
+                );
+
+
+                loginMessage.textContent =
+                    "登录失败：" +
+                    error.message;
+
+
+                loginButton.disabled = false;
+
+                loginButton.textContent =
+                    "登录后台";
+
+                return;
+            }
+
+
+            console.log(
+                "登录成功 UID：",
+                data.user?.id
+            );
+
+
+            // ==============================
+            // 检查管理员 UID
+            // ==============================
+
+            if (
+                !data.user ||
+                data.user.id !== ADMIN_UID
+            ) {
+
+                await supabase.auth.signOut();
+
+
+                loginMessage.textContent =
+                    "这个账号没有管理员权限。";
+
+
+                loginButton.disabled = false;
+
+                loginButton.textContent =
+                    "登录后台";
+
+                return;
+            }
+
+
+            // ==============================
+            // 登录成功
+            // ==============================
 
             loginMessage.textContent =
-                "登录失败：" + error.message;
+                "登录成功，正在进入后台...";
 
-            loginButton.disabled = false;
-            loginButton.textContent = "登录后台";
 
-            return;
+            // 稍微等待 Supabase 保存 session
+            setTimeout(() => {
+
+                window.location.href =
+                    "dashboard.html";
+
+            }, 300);
+
         }
-
-
-        // ==========================
-        // 检查管理员 UID
-        // ==========================
-
-        if (data.user.id !== ADMIN_UID) {
-
-            await supabase.auth.signOut();
-
-            loginMessage.textContent =
-                "这个账号没有管理员权限。";
-
-            loginButton.disabled = false;
-            loginButton.textContent = "登录后台";
-
-            return;
-        }
-
-
-        // ==========================
-        // 登录成功
-        // ==========================
-
-        window.location.href = "dashboard.html";
-
-    });
+    );
 }
 
 
@@ -138,218 +212,143 @@ if (loginForm) {
 const articleForm =
     document.getElementById("article-form");
 
+
 if (articleForm) {
 
+    // 页面打开时检查管理员
     checkAdmin();
 
 
-    // ==========================
+    // ==============================
     // 发布文章
-    // ==========================
+    // ==============================
 
-    articleForm.addEventListener("submit", async (event) => {
+    articleForm.addEventListener(
+        "submit",
+        async (event) => {
 
-        event.preventDefault();
-
-
-        // ==========================
-        // 获取表单内容
-        // ==========================
-
-        const title =
-            document.getElementById("title")
-                .value
-                .trim();
-
-        const category =
-            document.getElementById("category")
-                .value;
-
-        const coverImageFile =
-            document.getElementById("cover_image")
-                .files[0];
-
-        const content =
-            document.getElementById("content")
-                .value;
+            event.preventDefault();
 
 
-        const publishButton =
-            document.getElementById("publish-button");
-
-        const publishMessage =
-            document.getElementById("publish-message");
-
-
-        publishButton.disabled = true;
-        publishButton.textContent = "发布中...";
-        publishMessage.textContent = "";
+            const title =
+                document
+                    .getElementById("title")
+                    .value
+                    .trim();
 
 
-        // ==========================
-        // 再次确认管理员身份
-        // ==========================
-
-        const user =
-            await checkAdmin();
-
-        if (!user) {
-
-            return;
-        }
+            const category =
+                document
+                    .getElementById("category")
+                    .value;
 
 
-        // ==========================
-        // 上传封面图片
-        // ==========================
-
-        let coverImage = "";
-
-
-        if (coverImageFile) {
-
-            // 获取文件扩展名
-            const fileExtension =
-                coverImageFile.name
-                    .split(".")
-                    .pop()
-                    .toLowerCase();
+            const content =
+                document
+                    .getElementById("content")
+                    .value;
 
 
-            // 创建文章 UUID
-            const articleId =
-                crypto.randomUUID();
+            const publishButton =
+                document
+                    .getElementById("publish-button");
 
 
-            // 创建唯一文件名
-            const fileName =
-                `cover-${crypto.randomUUID()}.${fileExtension}`;
+            const publishMessage =
+                document
+                    .getElementById("publish-message");
 
 
-            // 获取当前日期
-            const now =
-                new Date();
+            publishButton.disabled = true;
 
-            const year =
-                now.getFullYear();
+            publishButton.textContent =
+                "发布中...";
 
-            const month =
-                String(now.getMonth() + 1)
-                    .padStart(2, "0");
+            publishMessage.textContent = "";
 
 
-            // Storage 文件路径
-            const filePath =
-                `${year}/${month}/${articleId}/${fileName}`;
+            // ==============================
+            // 再次确认管理员
+            // ==============================
+
+            const user =
+                await checkAdmin();
 
 
-            // ==========================
-            // 上传到 Supabase Storage
-            // ==========================
-
-            const { error: uploadError } =
-                await supabase.storage
-                    .from("images")
-                    .upload(
-                        filePath,
-                        coverImageFile,
-                        {
-                            cacheControl: "3600",
-                            upsert: false
-                        }
-                    );
-
-
-            if (uploadError) {
-
-                console.error(uploadError);
-
-                publishMessage.textContent =
-                    "图片上传失败：" +
-                    uploadError.message;
-
-                publishButton.disabled = false;
-                publishButton.textContent = "发布文章";
+            if (!user) {
 
                 return;
             }
 
 
-            // ==========================
-            // 获取公开图片 URL
-            // ==========================
+            // ==============================
+            // 保存文章
+            // ==============================
 
-            const { data: publicUrlData } =
-                supabase.storage
-                    .from("images")
-                    .getPublicUrl(filePath);
+            const {
+                error
+            } =
+                await supabase
+                    .from("articles")
+                    .insert({
 
+                        title: title,
 
-            coverImage =
-                publicUrlData.publicUrl;
+                        category: category,
 
+                        // 现在不再单独上传封面
+                        cover_image: "",
 
-            console.log(
-                "图片上传成功：",
-                coverImage
-            );
-        }
+                        // 保存完整 HTML
+                        content: content
 
-
-        // ==========================
-        // 写入 articles 数据表
-        // ==========================
-
-        const { error } =
-            await supabase
-                .from("articles")
-                .insert({
-
-                    title: title,
-
-                    category: category,
-
-                    cover_image: coverImage,
-
-                    content: content
-
-                });
+                    });
 
 
-        // ==========================
-        // 数据库写入失败
-        // ==========================
+            // ==============================
+            // 保存失败
+            // ==============================
 
-        if (error) {
+            if (error) {
 
-            console.error(error);
+                console.error(
+                    "发布失败：",
+                    error
+                );
+
+
+                publishMessage.textContent =
+                    "发布失败：" +
+                    error.message;
+
+
+                publishButton.disabled = false;
+
+                publishButton.textContent =
+                    "发布文章";
+
+                return;
+            }
+
+
+            // ==============================
+            // 发布成功
+            // ==============================
 
             publishMessage.textContent =
-                "发布失败：" +
-                error.message;
+                "文章发布成功！";
+
+
+            articleForm.reset();
+
 
             publishButton.disabled = false;
-            publishButton.textContent = "发布文章";
 
-            return;
+            publishButton.textContent =
+                "发布文章";
+
         }
-
-
-        // ==========================
-        // 发布成功
-        // ==========================
-
-        publishMessage.textContent =
-            "文章发布成功！";
-
-
-        articleForm.reset();
-
-
-        publishButton.disabled = false;
-        publishButton.textContent = "发布文章";
-
-    });
+    );
 }
 
 
@@ -360,13 +359,18 @@ if (articleForm) {
 const logoutButton =
     document.getElementById("logout-button");
 
+
 if (logoutButton) {
 
-    logoutButton.addEventListener("click", async () => {
+    logoutButton.addEventListener(
+        "click",
+        async () => {
 
-        await supabase.auth.signOut();
+            await supabase.auth.signOut();
 
-        window.location.href = "index.html";
+            window.location.href =
+                "index.html";
 
-    });
+        }
+    );
 }
