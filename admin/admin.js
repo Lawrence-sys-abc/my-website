@@ -4,8 +4,8 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 // Supabase 配置
 // ==============================
 
-const SUPABASE_URL = "你的_SUPABASE_URL";
-const SUPABASE_ANON_KEY = "你的_SUPABASE_ANON_KEY";
+const SUPABASE_URL = "https://lyfdqypsivxthrydwktx.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_HkdrJ0FOLBNQ2jDqVuzfHw_zAeJlhEb";
 
 const supabase = createClient(
     SUPABASE_URL,
