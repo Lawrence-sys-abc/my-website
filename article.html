@@ -22,6 +22,24 @@
         href="style.css"
     >
 
+    <style>
+        /* ==============================
+           完整 HTML 文章显示区域
+        ============================== */
+
+        .full-html-wrapper {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        #articleFrame {
+            width: 100%;
+            border: none;
+            display: block;
+            background: #fff;
+        }
+    </style>
+
 </head>
 
 
@@ -47,6 +65,8 @@
 
 <main class="article-container">
 
+    <!-- 加载中 -->
+
     <div
         id="loading"
         class="loading"
@@ -54,6 +74,8 @@
         正在加载文章...
     </div>
 
+
+    <!-- 文章 -->
 
     <article
         id="article"
@@ -82,23 +104,23 @@
         </time>
 
 
-        <img
-            id="articleCover"
-            class="article-cover"
-            src=""
-            alt=""
-            style="display: none;"
-        >
+        <!-- ==============================
+             完整 HTML 文章
+        ============================== -->
 
+        <div class="full-html-wrapper">
 
-        <div
-            id="articleContent"
-            class="article-content"
-        >
+            <iframe
+                id="articleFrame"
+                title="文章内容"
+            ></iframe>
+
         </div>
 
     </article>
 
+
+    <!-- 加载失败 -->
 
     <div
         id="errorMessage"
