@@ -2,173 +2,194 @@
 <html lang="zh-CN">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0">
 
     <meta name="description"
-        content="彭博社 · 创新点子王 —— 游戏、财经、娱乐新闻">
+        content="彭博社 · 创新点子王">
 
     <title>彭博社 · 创新点子王</title>
 
     <link rel="stylesheet" href="style.css">
+
 </head>
+
 
 <body>
 
-    <!-- =========================
-         顶部
-    ========================== -->
 
-    <header class="site-header">
+<header class="site-header">
 
-        <div class="header-inner">
+    <div class="header-inner">
 
-            <a href="index.html" class="logo">
-                彭博社 · 创新点子王
-            </a>
+        <a href="/" class="logo">
+            彭博社 · 创新点子王
+        </a>
 
-            <div class="header-right">
+        <div class="search-box">
 
-                <div class="search-box">
-                    <input
-                        type="text"
-                        id="searchInput"
-                        placeholder="搜索新闻..."
-                    >
+            <input
+                id="searchInput"
+                type="text"
+                placeholder="搜索新闻..."
+            >
 
-                    <button id="searchButton">
-                        搜索
-                    </button>
-                </div>
-
-            </div>
-
-        </div>
-
-    </header>
-
-
-    <!-- =========================
-         分类导航
-    ========================== -->
-
-    <nav class="category-nav">
-
-        <div class="category-inner">
-
-            <button
-                class="category-button active"
-                data-category="全部">
-                全部
-            </button>
-
-            <button
-                class="category-button"
-                data-category="游戏">
-                游戏
-            </button>
-
-            <button
-                class="category-button"
-                data-category="财经">
-                财经
-            </button>
-
-            <button
-                class="category-button"
-                data-category="娱乐">
-                娱乐
+            <button id="searchButton">
+                搜索
             </button>
 
         </div>
 
-    </nav>
+    </div>
+
+</header>
 
 
-    <!-- =========================
-         主内容
-    ========================== -->
 
-    <main class="main-container">
+<nav class="category-nav">
 
-        <!-- 页面标题 -->
+    <div class="category-inner">
 
-        <section class="page-heading">
+        <button
+            class="category-button active"
+            data-category="全部">
 
-            <div>
-                <p class="small-heading">
-                    LATEST NEWS
-                </p>
+            全部
 
-                <h1 id="pageTitle">
-                    最新资讯
-                </h1>
-            </div>
+        </button>
 
-            <p class="news-count">
-                共 <span id="newsCount">0</span> 条
+
+        <button
+            class="category-button"
+            data-category="游戏">
+
+            游戏
+
+        </button>
+
+
+        <button
+            class="category-button"
+            data-category="财经">
+
+            财经
+
+        </button>
+
+
+        <button
+            class="category-button"
+            data-category="娱乐">
+
+            娱乐
+
+        </button>
+
+    </div>
+
+</nav>
+
+
+
+<main class="main-container">
+
+
+    <section class="page-heading">
+
+        <div>
+
+            <p class="small-heading">
+                LATEST NEWS
             </p>
 
-        </section>
+            <h1 id="pageTitle">
+                最新资讯
+            </h1>
+
+        </div>
 
 
-        <!-- =========================
-             新闻区域
-        ========================== -->
+        <p class="news-count">
 
-        <section
-            id="newsGrid"
-            class="news-grid">
+            共
+            <span id="newsCount">0</span>
+            条
 
-            <!-- JavaScript 会自动生成新闻 -->
+        </p>
 
-        </section>
+    </section>
 
 
-        <!-- 没有搜索结果 -->
 
-        <div
-            id="emptyMessage"
-            class="empty-message">
+    <section
+        id="newsGrid"
+        class="news-grid">
 
-            <h2>没有找到相关新闻</h2>
+    </section>
+
+
+
+    <div
+        id="loading"
+        class="loading">
+
+        正在加载新闻...
+
+    </div>
+
+
+
+    <div
+        id="emptyMessage"
+        class="empty-message">
+
+        <h2>
+            没有找到相关新闻
+        </h2>
+
+        <p>
+            尝试更换分类或者搜索关键词。
+        </p>
+
+    </div>
+
+
+</main>
+
+
+
+<footer class="site-footer">
+
+    <div class="footer-inner">
+
+        <div>
+
+            <strong>
+                彭博社 · 创新点子王
+            </strong>
 
             <p>
-                尝试更换关键词或者选择其他分类。
+                游戏 · 财经 · 娱乐
             </p>
 
         </div>
 
-    </main>
 
+        <div class="footer-copy">
 
-    <!-- =========================
-         页脚
-    ========================== -->
-
-    <footer class="site-footer">
-
-        <div class="footer-inner">
-
-            <div>
-                <strong>彭博社 · 创新点子王</strong>
-                <p>
-                    游戏 · 财经 · 娱乐
-                </p>
-            </div>
-
-            <div class="footer-copy">
-                © 2026 Innovation Ideas
-            </div>
+            © 2026 Innovation Ideas
 
         </div>
 
-    </footer>
+    </div>
+
+</footer>
 
 
-    <script src="script.js"></script>
+<script src="script.js"></script>
 
 </body>
 
