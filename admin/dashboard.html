@@ -2,7 +2,9 @@
 <html lang="zh-CN">
 
 <head>
+
     <meta charset="UTF-8">
+
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
@@ -14,6 +16,7 @@
         rel="stylesheet"
         href="admin.css"
     >
+
 </head>
 
 
@@ -23,37 +26,63 @@
 
     <div class="dashboard-box">
 
+
+        <!-- ==========================================
+             顶部
+        =========================================== -->
+
         <div class="dashboard-header">
 
             <div>
-                <h1>Bloomberg New</h1>
-                <p>文章管理后台</p>
+
+                <h1>
+                    Bloomberg New
+                </h1>
+
+                <p>
+                    文章管理后台
+                </p>
+
             </div>
 
-            <button id="logout-button">
+
+            <button
+                type="button"
+                id="logout-button"
+            >
                 退出登录
             </button>
 
         </div>
 
 
+        <!-- ==========================================
+             内容
+        =========================================== -->
+
         <div class="dashboard-content">
 
-            <h2>发布文章</h2>
+
+            <h2>
+                发布文章
+            </h2>
 
 
-            <form id="article-form">
+            <form
+                id="article-form"
+            >
 
 
-                <!-- ==========================
+                <!-- ==================================
                      标题
-                =========================== -->
+                =================================== -->
 
                 <div class="form-group">
 
                     <label for="title">
                         标题
                     </label>
+
 
                     <input
                         type="text"
@@ -65,15 +94,16 @@
                 </div>
 
 
-                <!-- ==========================
+                <!-- ==================================
                      分类
-                =========================== -->
+                =================================== -->
 
                 <div class="form-group">
 
                     <label for="category">
                         分类
                     </label>
+
 
                     <select
                         id="category"
@@ -101,113 +131,97 @@
                 </div>
 
 
-                <!-- ==========================
+                <!-- ==================================
                      图片上传
-                =========================== -->
+                =================================== -->
 
                 <div class="form-group">
+
 
                     <label>
                         文章图片
                     </label>
 
-                    <p style="
-                        margin:6px 0 10px;
-                        color:#666;
-                        font-size:13px;
-                        line-height:1.6;
-                    ">
-                        按照 HTML 中的 IMAGE 编号上传图片。
-                        例如 HTML 使用 {{IMAGE_1}}，
-                        就上传到“图片 1”。
+
+                    <p class="help-text">
+
+                        根据文章需要添加图片。
+                        不需要图片时可以直接发布。
+
+                        <br>
+
+                        HTML 中使用
+                        <strong>{{IMAGE_1}}</strong>、
+                        <strong>{{IMAGE_2}}</strong>、
+                        <strong>{{IMAGE_3}}</strong>
+                        等占位符。
+
+                        <br>
+
+                        使用几个图片占位符，
+                        就添加对应数量的图片。
+
                     </p>
 
 
-                    <div class="image-upload-item">
+                    <!-- 图片列表 -->
 
-                        <label for="image_1">
-                            图片 1
-                        </label>
-
-                        <input
-                            type="file"
-                            id="image_1"
-                            accept="image/jpeg,image/png,image/webp"
-                        >
-
-                        <p
-                            id="image_1_message"
-                            class="image-message"
-                        ></p>
-
-                    </div>
+                    <div
+                        id="image-upload-list"
+                    ></div>
 
 
-                    <div class="image-upload-item">
+                    <!-- 添加图片 -->
 
-                        <label for="image_2">
-                            图片 2
-                        </label>
+                    <button
+                        type="button"
+                        id="add-image-button"
+                        class="secondary-button"
+                    >
+                        + 添加图片
+                    </button>
 
-                        <input
-                            type="file"
-                            id="image_2"
-                            accept="image/jpeg,image/png,image/webp"
-                        >
-
-                        <p
-                            id="image_2_message"
-                            class="image-message"
-                        ></p>
-
-                    </div>
-
-
-                    <div class="image-upload-item">
-
-                        <label for="image_3">
-                            图片 3
-                        </label>
-
-                        <input
-                            type="file"
-                            id="image_3"
-                            accept="image/jpeg,image/png,image/webp"
-                        >
-
-                        <p
-                            id="image_3_message"
-                            class="image-message"
-                        ></p>
-
-                    </div>
 
                 </div>
 
 
-                <!-- ==========================
-                     HTML正文
-                =========================== -->
+                <!-- ==================================
+                     HTML 正文
+                =================================== -->
 
                 <div class="form-group">
+
 
                     <label for="content">
                         文章正文（完整 HTML）
                     </label>
 
 
-                    <p style="
-                        margin:6px 0 10px;
-                        color:#666;
-                        font-size:13px;
-                        line-height:1.6;
-                    ">
+                    <p class="help-text">
 
                         直接粘贴完整 HTML。
-                        图片位置请使用
-                        {{IMAGE_1}}、
-                        {{IMAGE_2}}、
-                        {{IMAGE_3}}。
+
+                        <br>
+
+                        图片请使用：
+
+                        <strong>{{IMAGE_1}}</strong>
+
+                        <br>
+
+                        第二张图片：
+
+                        <strong>{{IMAGE_2}}</strong>
+
+                        <br>
+
+                        第三张图片：
+
+                        <strong>{{IMAGE_3}}</strong>
+
+                        <br>
+
+                        不需要图片的文章可以不使用图片占位符。
 
                     </p>
 
@@ -216,27 +230,32 @@
                         id="content"
                         rows="30"
                         placeholder="<!DOCTYPE html>
-<html>
+<html lang=&quot;zh-CN&quot;>
 <head>
-...
+    <meta charset=&quot;UTF-8&quot;>
+    <title>文章标题</title>
 </head>
+
 <body>
 
-<img src=&quot;{{IMAGE_1}}&quot;>
+    <h1>文章标题</h1>
 
-...
+    <p>文章正文……</p>
+
+    <img src=&quot;{{IMAGE_1}}&quot;>
 
 </body>
 </html>"
                         required
                     ></textarea>
 
+
                 </div>
 
 
-                <!-- ==========================
-                     发布
-                =========================== -->
+                <!-- ==================================
+                     发布按钮
+                =================================== -->
 
                 <button
                     type="submit"
@@ -246,12 +265,17 @@
                 </button>
 
 
+                <!-- ==================================
+                     发布消息
+                =================================== -->
+
                 <p
                     id="publish-message"
                 ></p>
 
 
             </form>
+
 
         </div>
 
@@ -264,6 +288,7 @@
     type="module"
     src="admin.js"
 ></script>
+
 
 </body>
 
