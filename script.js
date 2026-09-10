@@ -1,236 +1,17 @@
-/* =====================================================
-   新闻数据
-===================================================== */
+/* ==========================================
+   Supabase 配置
+========================================== */
 
-const newsData = [
+const SUPABASE_URL =
+    "你的_SUPABASE_URL";
 
-    /* =========================
-       游戏
-    ========================== */
+const SUPABASE_ANON_KEY =
+    "你的_SUPABASE_ANON_KEY";
 
-    {
-        id: 1,
 
-        category: "游戏",
-
-        title: "游戏行业正在迎来新的变化",
-
-        description:
-            "从玩家习惯到游戏开发方式，行业正在经历一轮新的变化。",
-
-        image:
-            "images/game/game01.jpg",
-
-        date:
-            "2026-09-10",
-
-        link:
-            "https://example.com/game-news-01",
-
-        featured:
-            true
-    },
-
-    {
-        id: 2,
-
-        category: "游戏",
-
-        title: "新一代游戏作品公布",
-
-        description:
-            "开发商公布最新作品，更多游戏内容将在未来陆续公开。",
-
-        image:
-            "images/game/game02.jpg",
-
-        date:
-            "2026-09-09",
-
-        link:
-            "https://example.com/game-news-02",
-
-        featured:
-            false
-    },
-
-    {
-        id: 3,
-
-        category: "游戏",
-
-        title: "玩家正在关注游戏市场的新趋势",
-
-        description:
-            "新的消费方式和游戏平台正在改变玩家选择游戏的方式。",
-
-        image:
-            "images/game/game03.jpg",
-
-        date:
-            "2026-09-08",
-
-        link:
-            "https://example.com/game-news-03",
-
-        featured:
-            false
-    },
-
-
-    /* =========================
-       财经
-    ========================== */
-
-    {
-        id: 4,
-
-        category: "财经",
-
-        title: "全球市场正在关注新的经济信号",
-
-        description:
-            "投资者正在密切关注全球经济环境以及金融市场的最新变化。",
-
-        image:
-            "images/finance/finance01.jpg",
-
-        date:
-            "2026-09-10",
-
-        link:
-            "https://example.com/finance-news-01",
-
-        featured:
-            false
-    },
-
-    {
-        id: 5,
-
-        category: "财经",
-
-        title: "科技公司继续成为资本市场焦点",
-
-        description:
-            "科技行业的变化正在影响投资者对未来市场的判断。",
-
-        image:
-            "images/finance/finance02.jpg",
-
-        date:
-            "2026-09-09",
-
-        link:
-            "https://example.com/finance-news-02",
-
-        featured:
-            false
-    },
-
-    {
-        id: 6,
-
-        category: "财经",
-
-        title: "全球企业正在重新评估增长机会",
-
-        description:
-            "企业正在寻找新的增长空间，并调整未来的发展策略。",
-
-        image:
-            "images/finance/finance03.jpg",
-
-        date:
-            "2026-09-07",
-
-        link:
-            "https://example.com/finance-news-03",
-
-        featured:
-            false
-    },
-
-
-    /* =========================
-       娱乐
-    ========================== */
-
-    {
-        id: 7,
-
-        category: "娱乐",
-
-        title: "影视行业正在进入新的发展阶段",
-
-        description:
-            "新的内容形式正在不断出现，影视行业的竞争也更加激烈。",
-
-        image:
-            "images/entertainment/entertainment01.jpg",
-
-        date:
-            "2026-09-10",
-
-        link:
-            "https://example.com/entertainment-news-01",
-
-        featured:
-            false
-    },
-
-    {
-        id: 8,
-
-        category: "娱乐",
-
-        title: "新电影公布最新消息",
-
-        description:
-            "新作品公布最新动态，引发观众和影迷关注。",
-
-        image:
-            "images/entertainment/entertainment02.jpg",
-
-        date:
-            "2026-09-08",
-
-        link:
-            "https://example.com/entertainment-news-02",
-
-        featured:
-            false
-    },
-
-    {
-        id: 9,
-
-        category: "娱乐",
-
-        title: "流媒体平台正在改变娱乐产业",
-
-        description:
-            "越来越多的观众选择通过数字平台观看新的内容。",
-
-        image:
-            "images/entertainment/entertainment03.jpg",
-
-        date:
-            "2026-09-06",
-
-        link:
-            "https://example.com/entertainment-news-03",
-
-        featured:
-            false
-    }
-
-];
-
-
-/* =====================================================
-   获取页面元素
-===================================================== */
+/* ==========================================
+   页面元素
+========================================== */
 
 const newsGrid =
     document.getElementById("newsGrid");
@@ -238,11 +19,14 @@ const newsGrid =
 const newsCount =
     document.getElementById("newsCount");
 
-const pageTitle =
-    document.getElementById("pageTitle");
+const loading =
+    document.getElementById("loading");
 
 const emptyMessage =
     document.getElementById("emptyMessage");
+
+const pageTitle =
+    document.getElementById("pageTitle");
 
 const searchInput =
     document.getElementById("searchInput");
@@ -251,254 +35,358 @@ const searchButton =
     document.getElementById("searchButton");
 
 const categoryButtons =
-    document.querySelectorAll(".category-button");
+    document.querySelectorAll(
+        ".category-button"
+    );
 
 
-/* 当前分类 */
+/* ==========================================
+   当前状态
+========================================== */
 
 let currentCategory = "全部";
-
-
-/* 当前搜索关键词 */
 
 let currentSearch = "";
 
 
-/* =====================================================
-   显示新闻
-===================================================== */
+/* ==========================================
+   获取新闻
+========================================== */
 
-function renderNews() {
+async function getNews() {
 
-    let filteredNews =
-        newsData.filter(news => {
-
-            /* 分类筛选 */
-
-            const categoryMatch =
-                currentCategory === "全部" ||
-                news.category === currentCategory;
-
-
-            /* 搜索筛选 */
-
-            const searchMatch =
-                currentSearch === "" ||
-                news.title
-                    .toLowerCase()
-                    .includes(
-                        currentSearch.toLowerCase()
-                    ) ||
-                news.description
-                    .toLowerCase()
-                    .includes(
-                        currentSearch.toLowerCase()
-                    );
-
-
-            return categoryMatch && searchMatch;
-
-        });
-
-
-    /* 清空 */
+    loading.style.display = "block";
 
     newsGrid.innerHTML = "";
-
-
-    /* 更新数量 */
-
-    newsCount.textContent =
-        filteredNews.length;
-
-
-    /* 没有结果 */
-
-    if (filteredNews.length === 0) {
-
-        emptyMessage.style.display = "block";
-
-        return;
-
-    }
-
 
     emptyMessage.style.display = "none";
 
 
-    /* =========================
-       创建新闻卡片
-    ========================== */
+    try {
 
-    filteredNews.forEach((news, index) => {
-
-        const card =
-            document.createElement("article");
+        let url =
+            `${SUPABASE_URL}/rest/v1/news` +
+            `?select=*` +
+            `&order=created_at.desc`;
 
 
-        card.className =
-            "news-card";
+        /* 分类 */
 
+        if (currentCategory !== "全部") {
 
-        /* 第一条新闻为 Featured */
-
-        if (
-            index === 0 &&
-            currentCategory === "全部" &&
-            currentSearch === ""
-        ) {
-
-            card.classList.add("featured");
+            url +=
+                `&category=eq.${encodeURIComponent(
+                    currentCategory
+                )}`;
 
         }
 
 
-        card.innerHTML = `
+        /* 搜索 */
 
-            <a
-                href="${news.link}"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="news-image-link"
-            >
+        if (currentSearch !== "") {
 
-                <img
-                    src="${news.image}"
-                    alt="${news.title}"
-                    class="news-image"
-                    loading="lazy"
-                >
+            url +=
+                `&title=ilike.*${encodeURIComponent(
+                    currentSearch
+                )}*`;
 
-            </a>
+        }
 
 
-            <div class="news-info">
+        const response =
+            await fetch(
+                url,
+                {
 
-                <span class="news-category">
-                    ${news.category}
-                </span>
+                    headers: {
+
+                        apikey:
+                            SUPABASE_ANON_KEY,
+
+                        Authorization:
+                            `Bearer ${SUPABASE_ANON_KEY}`
+
+                    }
+
+                }
+            );
 
 
-                <a
-                    href="${news.link}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="news-title"
-                >
-                    ${news.title}
-                </a>
+        if (!response.ok) {
+
+            throw new Error(
+                "无法获取新闻"
+            );
+
+        }
 
 
-                <p class="news-description">
-                    ${news.description}
+        const news =
+            await response.json();
+
+
+        loading.style.display = "none";
+
+
+        newsCount.textContent =
+            news.length;
+
+
+        if (news.length === 0) {
+
+            emptyMessage.style.display =
+                "block";
+
+            return;
+
+        }
+
+
+        news.forEach(
+            (item, index) => {
+
+                createNewsCard(
+                    item,
+                    index
+                );
+
+            }
+        );
+
+
+    } catch (error) {
+
+        loading.style.display = "none";
+
+        newsGrid.innerHTML = `
+
+            <div style="
+                grid-column:1/-1;
+                text-align:center;
+                padding:80px;
+            ">
+
+                <h2>
+                    新闻加载失败
+                </h2>
+
+                <p>
+                    请稍后再试
                 </p>
-
-
-                <time class="news-date">
-                    ${news.date}
-                </time>
 
             </div>
 
         `;
 
+        console.error(error);
 
-        newsGrid.appendChild(card);
-
-    });
+    }
 
 }
 
 
-/* =====================================================
-   分类按钮
-===================================================== */
+/* ==========================================
+   创建新闻卡片
+========================================== */
 
-categoryButtons.forEach(button => {
+function createNewsCard(
+    news,
+    index
+) {
 
-    button.addEventListener(
-        "click",
-        () => {
-
-            /* 当前分类 */
-
-            currentCategory =
-                button.dataset.category;
+    const card =
+        document.createElement("article");
 
 
-            /* 清空搜索 */
-
-            currentSearch = "";
-
-            searchInput.value = "";
+    card.className =
+        "news-card";
 
 
-            /* 修改按钮状态 */
+    if (
+        index === 0 &&
+        currentCategory === "全部" &&
+        currentSearch === ""
+    ) {
 
-            categoryButtons.forEach(btn => {
+        card.classList.add(
+            "featured"
+        );
 
-                btn.classList.remove("active");
-
-            });
-
-            button.classList.add("active");
+    }
 
 
-            /* 修改标题 */
+    card.innerHTML = `
 
-            if (currentCategory === "全部") {
+        <a
+            href="${news.link}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="news-image-link"
+        >
+
+            <img
+                src="${news.image_url}"
+                alt="${escapeHTML(
+                    news.title
+                )}"
+                class="news-image"
+                loading="lazy"
+            >
+
+        </a>
+
+
+        <div class="news-info">
+
+            <span class="news-category">
+                ${escapeHTML(
+                    news.category
+                )}
+            </span>
+
+
+            <a
+                href="${news.link}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="news-title"
+            >
+                ${escapeHTML(
+                    news.title
+                )}
+            </a>
+
+
+            <p class="news-description">
+
+                ${escapeHTML(
+                    news.description || ""
+                )}
+
+            </p>
+
+
+            <time class="news-date">
+
+                ${formatDate(
+                    news.created_at
+                )}
+
+            </time>
+
+        </div>
+
+    `;
+
+
+    newsGrid.appendChild(card);
+
+}
+
+
+/* ==========================================
+   防止 HTML 注入
+========================================== */
+
+function escapeHTML(text) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        text || "";
+
+    return div.innerHTML;
+
+}
+
+
+/* ==========================================
+   日期
+========================================== */
+
+function formatDate(date) {
+
+    return new Date(date)
+        .toLocaleDateString(
+            "zh-CN",
+            {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit"
+            }
+        );
+
+}
+
+
+/* ==========================================
+   分类
+========================================== */
+
+categoryButtons.forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                currentCategory =
+                    button.dataset.category;
+
+
+                categoryButtons.forEach(
+                    item => {
+
+                        item.classList.remove(
+                            "active"
+                        );
+
+                    }
+                );
+
+
+                button.classList.add(
+                    "active"
+                );
+
 
                 pageTitle.textContent =
-                    "最新资讯";
+                    currentCategory === "全部"
+                        ? "最新资讯"
+                        : `${currentCategory}资讯`;
 
-            } else {
 
-                pageTitle.textContent =
-                    currentCategory + "资讯";
+                getNews();
 
             }
+        );
+
+    }
+);
 
 
-            /* 重新显示 */
-
-            renderNews();
-
-        }
-    );
-
-});
-
-
-/* =====================================================
+/* ==========================================
    搜索
-===================================================== */
+========================================== */
 
-function performSearch() {
+function searchNews() {
 
     currentSearch =
         searchInput.value.trim();
 
 
-    pageTitle.textContent =
-        currentSearch
-            ? `搜索：${currentSearch}`
-            : "最新资讯";
-
-
-    renderNews();
+    getNews();
 
 }
 
 
-/* 点击搜索 */
-
 searchButton.addEventListener(
     "click",
-    performSearch
+    searchNews
 );
 
-
-/* 回车搜索 */
 
 searchInput.addEventListener(
     "keydown",
@@ -506,7 +394,7 @@ searchInput.addEventListener(
 
         if (event.key === "Enter") {
 
-            performSearch();
+            searchNews();
 
         }
 
@@ -514,8 +402,8 @@ searchInput.addEventListener(
 );
 
 
-/* =====================================================
-   第一次加载
-===================================================== */
+/* ==========================================
+   启动
+========================================== */
 
-renderNews();
+getNews();
