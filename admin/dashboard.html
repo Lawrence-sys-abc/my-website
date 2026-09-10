@@ -10,28 +10,24 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>管理后台 - Bloomberg New</title>
+    <title>发布文章 - Bloomberg New</title>
 
     <link
         rel="stylesheet"
-        href="admin.css"
+        href="/admin/admin.css"
     >
 
 </head>
 
-
 <body>
 
-<div class="admin-container">
+    <div class="dashboard-container">
 
-    <div class="dashboard-box">
-
-
-        <!-- ==========================================
+        <!-- =========================
              顶部
-        =========================================== -->
+        ========================== -->
 
-        <div class="dashboard-header">
+        <header class="dashboard-header">
 
             <div>
 
@@ -40,255 +36,172 @@
                 </h1>
 
                 <p>
-                    文章管理后台
+                    管理员发布后台
                 </p>
 
             </div>
 
-
             <button
                 type="button"
                 id="logout-button"
+                class="logout-button"
             >
                 退出登录
             </button>
 
-        </div>
+        </header>
 
 
-        <!-- ==========================================
-             内容
-        =========================================== -->
+        <!-- =========================
+             发布区域
+        ========================== -->
 
-        <div class="dashboard-content">
-
+        <main class="publish-box">
 
             <h2>
-                发布文章
+                发布新文章
             </h2>
 
 
-            <form
-                id="article-form"
-            >
+            <!-- 标题 -->
+
+            <div class="form-group">
+
+                <label for="title">
+                    文章标题
+                </label>
+
+                <input
+                    type="text"
+                    id="title"
+                    placeholder="请输入文章标题"
+                    required
+                >
+
+            </div>
 
 
-                <!-- ==================================
-                     标题
-                =================================== -->
+            <!-- 分类 -->
 
-                <div class="form-group">
+            <div class="form-group">
 
-                    <label for="title">
-                        标题
-                    </label>
+                <label for="category">
+                    文章分类
+                </label>
 
+                <select id="category">
 
-                    <input
-                        type="text"
-                        id="title"
-                        placeholder="请输入文章标题"
-                        required
-                    >
+                    <option value="游戏">
+                        游戏
+                    </option>
 
-                </div>
+                    <option value="财经">
+                        财经
+                    </option>
 
+                    <option value="娱乐">
+                        娱乐
+                    </option>
 
-                <!-- ==================================
-                     分类
-                =================================== -->
+                </select>
 
-                <div class="form-group">
-
-                    <label for="category">
-                        分类
-                    </label>
+            </div>
 
 
-                    <select
-                        id="category"
-                        required
-                    >
+            <!-- =========================
+                 图片上传
+            ========================== -->
 
-                        <option value="">
-                            请选择分类
-                        </option>
+            <div class="form-group">
 
-                        <option value="游戏">
-                            游戏
-                        </option>
-
-                        <option value="财经">
-                            财经
-                        </option>
-
-                        <option value="娱乐">
-                            娱乐
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- ==================================
-                     图片上传
-                =================================== -->
-
-                <div class="form-group">
-
+                <div class="section-title-row">
 
                     <label>
                         文章图片
                     </label>
 
-
-                    <p class="help-text">
-
-                        根据文章需要添加图片。
-                        不需要图片时可以直接发布。
-
-                        <br>
-
-                        HTML 中使用
-                        <strong>{{IMAGE_1}}</strong>、
-                        <strong>{{IMAGE_2}}</strong>、
-                        <strong>{{IMAGE_3}}</strong>
-                        等占位符。
-
-                        <br>
-
-                        使用几个图片占位符，
-                        就添加对应数量的图片。
-
-                    </p>
-
-
-                    <!-- 图片列表 -->
-
-                    <div
-                        id="image-upload-list"
-                    ></div>
-
-
-                    <!-- 添加图片 -->
-
                     <button
                         type="button"
                         id="add-image-button"
-                        class="secondary-button"
+                        class="add-image-button"
                     >
                         + 添加图片
                     </button>
 
-
                 </div>
 
 
-                <!-- ==================================
-                     HTML 正文
-                =================================== -->
+                <p class="help-text">
 
-                <div class="form-group">
+                    需要几张图片就添加几个上传框。
+                    不需要图片也可以直接发布。
 
-
-                    <label for="content">
-                        文章正文（完整 HTML）
-                    </label>
+                </p>
 
 
-                    <p class="help-text">
+                <div id="image-upload-list">
 
-                        直接粘贴完整 HTML。
-
-                        <br>
-
-                        图片请使用：
-
-                        <strong>{{IMAGE_1}}</strong>
-
-                        <br>
-
-                        第二张图片：
-
-                        <strong>{{IMAGE_2}}</strong>
-
-                        <br>
-
-                        第三张图片：
-
-                        <strong>{{IMAGE_3}}</strong>
-
-                        <br>
-
-                        不需要图片的文章可以不使用图片占位符。
-
-                    </p>
-
-
-                    <textarea
-                        id="content"
-                        rows="30"
-                        placeholder="<!DOCTYPE html>
-<html lang=&quot;zh-CN&quot;>
-<head>
-    <meta charset=&quot;UTF-8&quot;>
-    <title>文章标题</title>
-</head>
-
-<body>
-
-    <h1>文章标题</h1>
-
-    <p>文章正文……</p>
-
-    <img src=&quot;{{IMAGE_1}}&quot;>
-
-</body>
-</html>"
-                        required
-                    ></textarea>
-
+                    <!-- JS 会自动创建图片上传框 -->
 
                 </div>
 
-
-                <!-- ==================================
-                     发布按钮
-                =================================== -->
-
-                <button
-                    type="submit"
-                    id="publish-button"
-                >
-                    发布文章
-                </button>
+            </div>
 
 
-                <!-- ==================================
-                     发布消息
-                =================================== -->
+            <!-- =========================
+                 HTML正文
+            ========================== -->
 
-                <p
-                    id="publish-message"
-                ></p>
+            <div class="form-group">
+
+                <label for="content">
+                    HTML 文章内容
+                </label>
+
+                <p class="help-text">
+
+                    这里直接粘贴纯 HTML。
+                    图片位置使用
+                    <code>{{IMAGE_1}}</code>、
+                    <code>{{IMAGE_2}}</code>、
+                    <code>{{IMAGE_3}}</code>
+                    等占位符。
+
+                </p>
+
+                <textarea
+                    id="content"
+                    placeholder="在这里粘贴文章 HTML..."
+                    required
+                ></textarea>
+
+            </div>
 
 
-            </form>
+            <!-- =========================
+                 发布按钮
+            ========================== -->
+
+            <button
+                type="button"
+                id="publish-button"
+                class="publish-button"
+            >
+                发布文章
+            </button>
 
 
-        </div>
+            <p id="publish-message"></p>
+
+        </main>
 
     </div>
 
-</div>
 
-
-<script
-    type="module"
-    src="/admin/admin.js"
-></script>
-
+    <script
+        type="module"
+        src="/admin/admin.js"
+    ></script>
 
 </body>
 
