@@ -353,27 +353,17 @@ function createNewsCard(
        后面我们可以制作文章详情页
     ====================================== */
 
-    card.style.cursor = "pointer";
+card.style.cursor = "pointer";
 
+card.addEventListener(
+    "click",
+    () => {
 
-    card.addEventListener(
-        "click",
-        () => {
+        window.location.href =
+            `article.html?id=${encodeURIComponent(news.id)}`;
 
-            console.log(
-                "点击文章：",
-                news.id
-            );
-
-        }
-    );
-
-
-    newsGrid.appendChild(
-        card
-    );
-
-}
+    }
+);
 
 
 /* ==========================================
