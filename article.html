@@ -23,21 +23,36 @@
     >
 
     <style>
-        /* ==============================
-           完整 HTML 文章显示区域
-        ============================== */
 
-        .full-html-wrapper {
+        html,
+        body {
+            margin: 0;
+            padding: 0;
             width: 100%;
-            margin-top: 20px;
+            background: #fff;
+        }
+
+        #loading {
+            padding: 40px;
+            text-align: center;
+        }
+
+        #article {
+            width: 100%;
+            margin: 0;
+            padding: 0;
         }
 
         #articleFrame {
-            width: 100%;
-            border: none;
             display: block;
+            width: 100%;
+            min-height: 900px;
+            border: 0;
+            margin: 0;
+            padding: 0;
             background: #fff;
         }
+
     </style>
 
 </head>
@@ -45,27 +60,6 @@
 
 <body>
 
-
-<header class="site-header">
-
-    <div class="header-inner">
-
-        <a
-            href="/"
-            class="logo"
-        >
-            彭博社 · 创新点子王
-        </a>
-
-    </div>
-
-</header>
-
-
-
-<main class="article-container">
-
-    <!-- 加载中 -->
 
     <div
         id="loading"
@@ -75,52 +69,18 @@
     </div>
 
 
-    <!-- 文章 -->
-
-    <article
+    <main
         id="article"
-        class="article-detail"
         style="display: none;"
     >
 
-        <div
-            class="article-category"
-            id="articleCategory"
-        >
-        </div>
+        <iframe
+            id="articleFrame"
+            title="文章内容"
+        ></iframe>
 
+    </main>
 
-        <h1
-            class="article-title"
-            id="articleTitle"
-        >
-        </h1>
-
-
-        <time
-            class="article-date"
-            id="articleDate"
-        >
-        </time>
-
-
-        <!-- ==============================
-             完整 HTML 文章
-        ============================== -->
-
-        <div class="full-html-wrapper">
-
-            <iframe
-                id="articleFrame"
-                title="文章内容"
-            ></iframe>
-
-        </div>
-
-    </article>
-
-
-    <!-- 加载失败 -->
 
     <div
         id="errorMessage"
@@ -142,14 +102,11 @@
 
     </div>
 
-</main>
 
-
-
-<script
-    type="module"
-    src="article.js"
-></script>
+    <script
+        type="module"
+        src="article.js"
+    ></script>
 
 
 </body>
