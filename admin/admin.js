@@ -723,3 +723,4 @@ if (logoutButton) {
         }
     );
 }
+
