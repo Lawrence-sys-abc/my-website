@@ -3,144 +3,267 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>管理后台 - Bloomberg New</title>
 
-    <link rel="stylesheet" href="admin.css">
+    <link
+        rel="stylesheet"
+        href="admin.css"
+    >
 </head>
+
 
 <body>
 
-    <div class="admin-container">
+<div class="admin-container">
 
-        <div class="dashboard-box">
+    <div class="dashboard-box">
 
-            <div class="dashboard-header">
+        <div class="dashboard-header">
 
-                <div>
-                    <h1>Bloomberg New</h1>
-                    <p>文章管理后台</p>
-                </div>
-
-                <button id="logout-button">
-                    退出登录
-                </button>
-
+            <div>
+                <h1>Bloomberg New</h1>
+                <p>文章管理后台</p>
             </div>
 
+            <button id="logout-button">
+                退出登录
+            </button>
 
-            <div class="dashboard-content">
+        </div>
 
-                <h2>发布文章</h2>
 
-                <form id="article-form">
+        <div class="dashboard-content">
 
-                    <!-- 文章标题 -->
-                    <div class="form-group">
+            <h2>发布文章</h2>
 
-                        <label for="title">
-                            标题
+
+            <form id="article-form">
+
+
+                <!-- ==========================
+                     标题
+                =========================== -->
+
+                <div class="form-group">
+
+                    <label for="title">
+                        标题
+                    </label>
+
+                    <input
+                        type="text"
+                        id="title"
+                        placeholder="请输入文章标题"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- ==========================
+                     分类
+                =========================== -->
+
+                <div class="form-group">
+
+                    <label for="category">
+                        分类
+                    </label>
+
+                    <select
+                        id="category"
+                        required
+                    >
+
+                        <option value="">
+                            请选择分类
+                        </option>
+
+                        <option value="游戏">
+                            游戏
+                        </option>
+
+                        <option value="财经">
+                            财经
+                        </option>
+
+                        <option value="娱乐">
+                            娱乐
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- ==========================
+                     图片上传
+                =========================== -->
+
+                <div class="form-group">
+
+                    <label>
+                        文章图片
+                    </label>
+
+                    <p style="
+                        margin:6px 0 10px;
+                        color:#666;
+                        font-size:13px;
+                        line-height:1.6;
+                    ">
+                        按照 HTML 中的 IMAGE 编号上传图片。
+                        例如 HTML 使用 {{IMAGE_1}}，
+                        就上传到“图片 1”。
+                    </p>
+
+
+                    <div class="image-upload-item">
+
+                        <label for="image_1">
+                            图片 1
                         </label>
 
                         <input
-                            type="text"
-                            id="title"
-                            placeholder="请输入文章标题"
-                            required
+                            type="file"
+                            id="image_1"
+                            accept="image/jpeg,image/png,image/webp"
                         >
 
-                    </div>
-
-
-                    <!-- 文章分类 -->
-                    <div class="form-group">
-
-                        <label for="category">
-                            分类
-                        </label>
-
-                        <select id="category" required>
-
-                            <option value="">
-                                请选择分类
-                            </option>
-
-                            <option value="游戏">
-                                游戏
-                            </option>
-
-                            <option value="财经">
-                                财经
-                            </option>
-
-                            <option value="娱乐">
-                                娱乐
-                            </option>
-
-                        </select>
+                        <p
+                            id="image_1_message"
+                            class="image-message"
+                        ></p>
 
                     </div>
 
 
-                    <!-- 完整 HTML -->
-                    <div class="form-group">
+                    <div class="image-upload-item">
 
-                        <label for="content">
-                            文章正文（完整 HTML）
+                        <label for="image_2">
+                            图片 2
                         </label>
 
-                        <p style="
-                            margin: 6px 0 10px;
-                            color: #666;
-                            font-size: 13px;
-                            line-height: 1.6;
-                        ">
-                            直接复制你的 .html 文件中的全部代码，
-                            从 &lt;!DOCTYPE html&gt; 到 &lt;/html&gt;，
-                            然后粘贴到下面。
-                        </p>
+                        <input
+                            type="file"
+                            id="image_2"
+                            accept="image/jpeg,image/png,image/webp"
+                        >
 
-                        <textarea
-                            id="content"
-                            rows="30"
-                            placeholder="<!DOCTYPE html>
-<html lang=&quot;zh-CN&quot;>
+                        <p
+                            id="image_2_message"
+                            class="image-message"
+                        ></p>
+
+                    </div>
+
+
+                    <div class="image-upload-item">
+
+                        <label for="image_3">
+                            图片 3
+                        </label>
+
+                        <input
+                            type="file"
+                            id="image_3"
+                            accept="image/jpeg,image/png,image/webp"
+                        >
+
+                        <p
+                            id="image_3_message"
+                            class="image-message"
+                        ></p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==========================
+                     HTML正文
+                =========================== -->
+
+                <div class="form-group">
+
+                    <label for="content">
+                        文章正文（完整 HTML）
+                    </label>
+
+
+                    <p style="
+                        margin:6px 0 10px;
+                        color:#666;
+                        font-size:13px;
+                        line-height:1.6;
+                    ">
+
+                        直接粘贴完整 HTML。
+                        图片位置请使用
+                        {{IMAGE_1}}、
+                        {{IMAGE_2}}、
+                        {{IMAGE_3}}。
+
+                    </p>
+
+
+                    <textarea
+                        id="content"
+                        rows="30"
+                        placeholder="<!DOCTYPE html>
+<html>
 <head>
-    ...
+...
 </head>
 <body>
-    ...
+
+<img src=&quot;{{IMAGE_1}}&quot;>
+
+...
+
 </body>
 </html>"
-                            required
-                        ></textarea>
+                        required
+                    ></textarea>
 
-                    </div>
-
-
-                    <!-- 发布按钮 -->
-                    <button
-                        type="submit"
-                        id="publish-button"
-                    >
-                        发布文章
-                    </button>
+                </div>
 
 
-                    <!-- 发布状态 -->
-                    <p id="publish-message"></p>
+                <!-- ==========================
+                     发布
+                =========================== -->
 
-                </form>
+                <button
+                    type="submit"
+                    id="publish-button"
+                >
+                    发布文章
+                </button>
 
-            </div>
+
+                <p
+                    id="publish-message"
+                ></p>
+
+
+            </form>
 
         </div>
 
     </div>
 
+</div>
 
-    <script type="module" src="admin.js"></script>
+
+<script
+    type="module"
+    src="admin.js"
+></script>
 
 </body>
 
