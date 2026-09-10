@@ -4,7 +4,7 @@ import {
 
 
 // ==========================================
-// Supabase
+// Supabase 配置
 // ==========================================
 
 const SUPABASE_URL =
@@ -17,11 +17,17 @@ const ADMIN_UID =
     "adc53a79-71b3-4db6-800c-6f96aee5f304";
 
 
-const supabase =
-    createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY
-    );
+const supabase = createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY,
+    {
+        auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
+        }
+    }
+);
 
 
 // ==========================================
@@ -30,43 +36,77 @@ const supabase =
 
 async function checkAdmin() {
 
+    console.log("开始检查管理员登录状态...");
+
     const {
-        data,
-        error
-    } =
-        await supabase.auth.getUser();
+        data: {
+            session
+        },
+        error: sessionError
+    } = await supabase.auth.getSession();
 
 
-    if (
-        error ||
-        !data.user
-    ) {
+    console.log("Session:", session);
+    console.log("Session Error:", sessionError);
 
-        window.location.href =
-            "index.html";
+
+    if (sessionError) {
+
+        console.error(
+            "获取 Session 失败:",
+            sessionError
+        );
+
+        window.location.href = "index.html";
 
         return null;
     }
 
 
-    if (
-        data.user.id !== ADMIN_UID
-    ) {
+    if (!session || !session.user) {
+
+        console.error(
+            "当前没有登录 Session"
+        );
+
+        window.location.href = "index.html";
+
+        return null;
+    }
+
+
+    console.log(
+        "当前用户 UID:",
+        session.user.id
+    );
+
+
+    // ==========================================
+    // 检查管理员 UID
+    // ==========================================
+
+    if (session.user.id !== ADMIN_UID) {
+
+        console.error(
+            "UID 不匹配:",
+            session.user.id
+        );
 
         await supabase.auth.signOut();
 
-        alert(
-            "你没有管理员权限。"
-        );
+        alert("你没有管理员权限。");
 
-        window.location.href =
-            "index.html";
+        window.location.href = "index.html";
 
         return null;
     }
 
 
-    return data.user;
+    console.log(
+        "管理员验证成功"
+    );
+
+    return session.user;
 }
 
 
@@ -75,9 +115,7 @@ async function checkAdmin() {
 // ==========================================
 
 const loginForm =
-    document.getElementById(
-        "login-form"
-    );
+    document.getElementById("login-form");
 
 
 if (loginForm) {
@@ -114,82 +152,191 @@ if (loginForm) {
                 );
 
 
-            loginButton.disabled =
-                true;
-
+            loginButton.disabled = true;
 
             loginButton.textContent =
                 "登录中...";
 
-
-            loginMessage.textContent =
-                "";
+            loginMessage.textContent = "";
 
 
-            const {
-                data,
-                error
-            } =
-                await supabase.auth
-                    .signInWithPassword({
-
-                        email: email,
-
-                        password: password
-
-                    });
+            console.log(
+                "正在登录:",
+                email
+            );
 
 
-            if (error) {
+            try {
+
+                // ==================================
+                // 登录
+                // ==================================
+
+                const {
+                    data,
+                    error
+                } =
+                    await supabase.auth
+                        .signInWithPassword({
+
+                            email: email,
+
+                            password: password
+
+                        });
+
+
+                console.log(
+                    "登录返回:",
+                    data
+                );
+
+                console.log(
+                    "登录错误:",
+                    error
+                );
+
+
+                if (error) {
+
+                    console.error(
+                        "Supabase 登录失败:",
+                        error
+                    );
+
+                    loginMessage.textContent =
+                        "登录失败：" +
+                        error.message;
+
+                    return;
+                }
+
+
+                // ==================================
+                // 检查用户
+                // ==================================
+
+                if (!data || !data.user) {
+
+                    loginMessage.textContent =
+                        "登录失败：没有获取到用户信息。";
+
+                    return;
+                }
+
+
+                console.log(
+                    "登录成功 UID:",
+                    data.user.id
+                );
+
+
+                // ==================================
+                // 检查管理员 UID
+                // ==================================
+
+                if (
+                    data.user.id !== ADMIN_UID
+                ) {
+
+                    console.error(
+                        "UID 不匹配",
+                        {
+                            登录用户: data.user.id,
+                            管理员UID: ADMIN_UID
+                        }
+                    );
+
+
+                    await supabase.auth.signOut();
+
+
+                    loginMessage.textContent =
+                        "这个账号没有管理员权限。";
+
+                    return;
+                }
+
+
+                // ==================================
+                // 确认 Session
+                // ==================================
+
+                const {
+                    data: sessionData,
+                    error: sessionError
+                } =
+                    await supabase.auth.getSession();
+
+
+                console.log(
+                    "登录后的 Session:",
+                    sessionData
+                );
+
+
+                if (
+                    sessionError ||
+                    !sessionData.session
+                ) {
+
+                    console.error(
+                        "登录成功，但是没有 Session:",
+                        sessionError
+                    );
+
+                    loginMessage.textContent =
+                        "登录成功，但 Session 保存失败。";
+
+                    return;
+                }
+
+
+                // ==================================
+                // 登录完成
+                // ==================================
+
+                loginMessage.textContent =
+                    "登录成功，正在进入后台...";
+
+
+                console.log(
+                    "准备进入 dashboard.html"
+                );
+
+
+                // 稍微等待一下，确保 Session 写入
+                setTimeout(
+                    () => {
+
+                        window.location.replace(
+                            "dashboard.html"
+                        );
+
+                    },
+                    300
+                );
+
+            } catch (error) {
 
                 console.error(
+                    "登录发生异常:",
                     error
                 );
 
 
                 loginMessage.textContent =
-                    "登录失败：" +
+                    "登录发生错误：" +
                     error.message;
 
+            } finally {
 
-                loginButton.disabled =
-                    false;
-
-
-                loginButton.textContent =
-                    "登录后台";
-
-
-                return;
-            }
-
-
-            if (
-                !data.user ||
-                data.user.id !== ADMIN_UID
-            ) {
-
-                await supabase.auth.signOut();
-
-
-                loginMessage.textContent =
-                    "这个账号没有管理员权限。";
-
-
-                loginButton.disabled =
-                    false;
-
+                loginButton.disabled = false;
 
                 loginButton.textContent =
                     "登录后台";
 
-
-                return;
             }
-
-
-            window.location.href =
-                "dashboard.html";
 
         }
     );
@@ -218,7 +365,7 @@ function getImageFile(number) {
 
 
 // ==========================================
-// 显示图片上传状态
+// 图片上传状态
 // ==========================================
 
 function setImageMessage(
@@ -238,12 +385,11 @@ function setImageMessage(
             message;
 
     }
-
 }
 
 
 // ==========================================
-// 上传图片到 Supabase Storage
+// 上传图片
 // ==========================================
 
 async function uploadImage(
@@ -263,11 +409,7 @@ async function uploadImage(
     );
 
 
-    // --------------------------------------
-    // 文件扩展名
-    // --------------------------------------
-
-    let extension =
+    const extension =
         file.name
             .split(".")
             .pop()
@@ -288,17 +430,9 @@ async function uploadImage(
     }
 
 
-    // --------------------------------------
-    // 文件名
-    // --------------------------------------
-
     const fileName =
         `image-${crypto.randomUUID()}.${extension}`;
 
-
-    // --------------------------------------
-    // 文件路径
-    // --------------------------------------
 
     const now =
         new Date();
@@ -317,10 +451,6 @@ async function uploadImage(
     const filePath =
         `${year}/${month}/${articleId}/${fileName}`;
 
-
-    // --------------------------------------
-    // 上传
-    // --------------------------------------
 
     const {
         error: uploadError
@@ -344,10 +474,6 @@ async function uploadImage(
     }
 
 
-    // --------------------------------------
-    // 获取公开 URL
-    // --------------------------------------
-
     const {
         data
     } =
@@ -358,23 +484,13 @@ async function uploadImage(
             );
 
 
-    const publicUrl =
-        data.publicUrl;
-
-
     setImageMessage(
         imageNumber,
         "上传成功"
     );
 
 
-    console.log(
-        `图片 ${imageNumber}：`,
-        publicUrl
-    );
-
-
-    return publicUrl;
+    return data.publicUrl;
 }
 
 
@@ -431,23 +547,15 @@ if (articleForm) {
                     .value;
 
 
-            publishButton.disabled =
-                true;
-
+            publishButton.disabled = true;
 
             publishButton.textContent =
                 "发布中...";
 
-
-            publishMessage.textContent =
-                "";
+            publishMessage.textContent = "";
 
 
             try {
-
-                // ==================================
-                // 再次检查管理员
-                // ==================================
 
                 const user =
                     await checkAdmin();
@@ -458,17 +566,9 @@ if (articleForm) {
                 }
 
 
-                // ==================================
-                // 创建文章 ID
-                // ==================================
-
                 const articleId =
                     crypto.randomUUID();
 
-
-                // ==================================
-                // 上传图片
-                // ==================================
 
                 const imageFiles = {
 
@@ -492,128 +592,50 @@ if (articleForm) {
                 };
 
 
-                // ==================================
-                // IMAGE_1
-                // ==================================
+                for (const number of [1, 2, 3]) {
 
-                if (imageFiles[1]) {
+                    if (imageFiles[number]) {
 
-                    imageUrls[1] =
-                        await uploadImage(
-                            imageFiles[1],
-                            1,
-                            articleId
+                        imageUrls[number] =
+                            await uploadImage(
+                                imageFiles[number],
+                                number,
+                                articleId
+                            );
+
+                    }
+
+                }
+
+
+                for (const number of [1, 2, 3]) {
+
+                    const placeholder =
+                        `{{IMAGE_${number}}}`;
+
+
+                    if (
+                        content.includes(
+                            placeholder
+                        ) &&
+                        !imageUrls[number]
+                    ) {
+
+                        throw new Error(
+                            `HTML 使用了 ${placeholder}，但你没有上传图片 ${number}。`
+                        );
+
+                    }
+
+
+                    content =
+                        content.replaceAll(
+                            placeholder,
+                            imageUrls[number]
                         );
 
                 }
 
-
-                // ==================================
-                // IMAGE_2
-                // ==================================
-
-                if (imageFiles[2]) {
-
-                    imageUrls[2] =
-                        await uploadImage(
-                            imageFiles[2],
-                            2,
-                            articleId
-                        );
-
-                }
-
-
-                // ==================================
-                // IMAGE_3
-                // ==================================
-
-                if (imageFiles[3]) {
-
-                    imageUrls[3] =
-                        await uploadImage(
-                            imageFiles[3],
-                            3,
-                            articleId
-                        );
-
-                }
-
-
-                // ==================================
-                // 检查 HTML 中的图片占位符
-                // ==================================
-
-                if (
-                    content.includes(
-                        "{{IMAGE_1}}"
-                    ) &&
-                    !imageUrls[1]
-                ) {
-
-                    throw new Error(
-                        "HTML 使用了 {{IMAGE_1}}，但你没有上传图片 1。"
-                    );
-
-                }
-
-
-                if (
-                    content.includes(
-                        "{{IMAGE_2}}"
-                    ) &&
-                    !imageUrls[2]
-                ) {
-
-                    throw new Error(
-                        "HTML 使用了 {{IMAGE_2}}，但你没有上传图片 2。"
-                    );
-
-                }
-
-
-                if (
-                    content.includes(
-                        "{{IMAGE_3}}"
-                    ) &&
-                    !imageUrls[3]
-                ) {
-
-                    throw new Error(
-                        "HTML 使用了 {{IMAGE_3}}，但你没有上传图片 3。"
-                    );
-
-                }
-
-
-                // ==================================
-                // 替换图片占位符
-                // ==================================
-
-                content =
-                    content.replaceAll(
-                        "{{IMAGE_1}}",
-                        imageUrls[1]
-                    );
-
-
-                content =
-                    content.replaceAll(
-                        "{{IMAGE_2}}",
-                        imageUrls[2]
-                    );
-
-
-                content =
-                    content.replaceAll(
-                        "{{IMAGE_3}}",
-                        imageUrls[3]
-                    );
-
-
-                // ==================================
-                // 写入数据库
-                // ==================================
 
                 const {
                     error
@@ -641,10 +663,6 @@ if (articleForm) {
                 }
 
 
-                // ==================================
-                // 成功
-                // ==================================
-
                 publishMessage.textContent =
                     "文章发布成功！";
 
@@ -652,28 +670,14 @@ if (articleForm) {
                 articleForm.reset();
 
 
-                setImageMessage(
-                    1,
-                    ""
-                );
-
-
-                setImageMessage(
-                    2,
-                    ""
-                );
-
-
-                setImageMessage(
-                    3,
-                    ""
-                );
-
+                setImageMessage(1, "");
+                setImageMessage(2, "");
+                setImageMessage(3, "");
 
             } catch (error) {
 
                 console.error(
-                    "发布失败：",
+                    "发布失败:",
                     error
                 );
 
@@ -685,9 +689,7 @@ if (articleForm) {
             }
 
 
-            publishButton.disabled =
-                false;
-
+            publishButton.disabled = false;
 
             publishButton.textContent =
                 "发布文章";
