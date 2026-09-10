@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="彭博社 · 创新点子王"
+    >
+
+    <title>文章 - 彭博社 · 创新点子王</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<header class="site-header">
+
+    <div class="header-inner">
+
+        <a
+            href="/"
+            class="logo"
+        >
+            彭博社 · 创新点子王
+        </a>
+
+    </div>
+
+</header>
+
+
+
+<main class="article-container">
+
+    <div
+        id="loading"
+        class="loading"
+    >
+        正在加载文章...
+    </div>
+
+
+    <article
+        id="article"
+        class="article-detail"
+        style="display: none;"
+    >
+
+        <div
+            class="article-category"
+            id="articleCategory"
+        >
+        </div>
+
+
+        <h1
+            class="article-title"
+            id="articleTitle"
+        >
+        </h1>
+
+
+        <time
+            class="article-date"
+            id="articleDate"
+        >
+        </time>
+
+
+        <img
+            id="articleCover"
+            class="article-cover"
+            src=""
+            alt=""
+            style="display: none;"
+        >
+
+
+        <div
+            id="articleContent"
+            class="article-content"
+        >
+        </div>
+
+    </article>
+
+
+    <div
+        id="errorMessage"
+        class="empty-message"
+        style="display: none;"
+    >
+
+        <h2>
+            文章加载失败
+        </h2>
+
+        <p>
+            这篇文章可能不存在。
+        </p>
+
+        <a href="/">
+            返回首页
+        </a>
+
+    </div>
+
+</main>
+
+
+
+<script
+    type="module"
+    src="article.js"
+></script>
+
+
+</body>
+
+</html>
