@@ -287,8 +287,6 @@ function createNewsCard(
 
     } else {
 
-        /* 没有图片时显示占位 */
-
         imageHTML = `
 
             <div class="news-image-wrapper no-image">
@@ -305,7 +303,7 @@ function createNewsCard(
 
 
     /* ======================================
-       新闻卡片 HTML
+       新闻卡片
     ====================================== */
 
     card.innerHTML = `
@@ -347,23 +345,34 @@ function createNewsCard(
 
 
     /* ======================================
-       点击新闻卡片
-       
-       暂时使用文章 ID
-       后面我们可以制作文章详情页
+       点击文章
     ====================================== */
 
-card.style.cursor = "pointer";
+    card.style.cursor = "pointer";
 
-card.addEventListener(
-    "click",
-    () => {
 
-        window.location.href =
-            `article.html?id=${encodeURIComponent(news.id)}`;
+    card.addEventListener(
+        "click",
+        () => {
 
-    }
-);
+            window.location.href =
+                `article.html?id=${encodeURIComponent(
+                    news.id
+                )}`;
+
+        }
+    );
+
+
+    /* ======================================
+       添加到新闻列表
+    ====================================== */
+
+    newsGrid.appendChild(
+        card
+    );
+
+}
 
 
 /* ==========================================
@@ -375,8 +384,10 @@ function escapeHTML(text) {
     const div =
         document.createElement("div");
 
+
     div.textContent =
         text || "";
+
 
     return div.innerHTML;
 
