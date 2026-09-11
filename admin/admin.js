@@ -3,9 +3,15 @@
    Supabase
 ========================================================= */
 
+
+/* =========================================================
+   Supabase
+   使用 esm.sh，确保浏览器可以正常导入 createClient
+========================================================= */
+
 import {
     createClient
-} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+} from "https://esm.sh/@supabase/supabase-js@2";
 
 
 /* =========================================================
@@ -40,8 +46,13 @@ const supabase =
     );
 
 
+console.log(
+    "Supabase 初始化成功"
+);
+
+
 /* =========================================================
-   页面元素
+   获取页面元素
 ========================================================= */
 
 const loginForm =
@@ -70,7 +81,7 @@ const imageUploadList =
 
 
 /* =========================================================
-   判断当前是不是管理员
+   检查管理员
 ========================================================= */
 
 async function checkAdmin() {
@@ -80,7 +91,8 @@ async function checkAdmin() {
         const {
             data,
             error
-        } = await supabase.auth.getSession();
+        } =
+            await supabase.auth.getSession();
 
 
         if (error) {
@@ -146,7 +158,7 @@ async function checkAdmin() {
 
 
 /* =========================================================
-   登录页面
+   登录
 ========================================================= */
 
 if (loginForm) {
@@ -164,6 +176,7 @@ if (loginForm) {
                     .value
                     .trim();
 
+
             const password =
                 document
                     .getElementById("password")
@@ -179,7 +192,8 @@ if (loginForm) {
             }
 
 
-            loginButton.disabled = true;
+            loginButton.disabled =
+                true;
 
             loginButton.textContent =
                 "登录中...";
@@ -261,30 +275,45 @@ if (loginForm) {
                 );
 
 
-                /* =========================
+                /* =================================================
                    检查管理员 UID
-                ========================== */
+                ================================================= */
 
-                if (user.id !== ADMIN_UID) {
+                if (
+                    user.id !== ADMIN_UID
+                ) {
+
+                    console.error(
+                        "UID 不匹配",
+                        {
+                            当前UID: user.id,
+                            管理员UID: ADMIN_UID
+                        }
+                    );
+
 
                     await supabase.auth.signOut();
+
 
                     loginMessage.textContent =
                         "这个账号没有管理员权限";
 
+
                     loginButton.disabled =
                         false;
 
+
                     loginButton.textContent =
                         "登录后台";
+
 
                     return;
                 }
 
 
-                /* =========================
-                   再确认 Session
-                ========================== */
+                /* =================================================
+                   检查 Session
+                ================================================= */
 
                 const {
                     data: sessionData
@@ -298,34 +327,38 @@ if (loginForm) {
                 );
 
 
-                if (!sessionData?.session) {
+                if (
+                    !sessionData?.session
+                ) {
 
                     loginMessage.textContent =
                         "登录成功，但 Session 保存失败，请重新登录";
 
+
                     loginButton.disabled =
                         false;
+
 
                     loginButton.textContent =
                         "登录后台";
 
+
                     return;
                 }
+
+
+                console.log(
+                    "管理员验证成功"
+                );
 
 
                 loginMessage.textContent =
                     "登录成功，正在进入后台...";
 
 
-                console.log(
-                    "准备进入 dashboard.html"
-                );
-
-
-                /* =========================
-                   关键：
-                   使用绝对路径
-                ========================== */
+                /* =================================================
+                   进入 Dashboard
+                ================================================= */
 
                 window.location.href =
                     "/admin/dashboard.html";
@@ -337,15 +370,19 @@ if (loginForm) {
                     error
                 );
 
+
                 loginMessage.textContent =
                     "登录发生异常：" +
                     error.message;
 
+
                 loginButton.disabled =
                     false;
 
+
                 loginButton.textContent =
                     "登录后台";
+
             }
 
         }
@@ -355,7 +392,7 @@ if (loginForm) {
 
 
 /* =========================================================
-   Dashboard 页面
+   Dashboard 初始化
 ========================================================= */
 
 if (publishButton) {
@@ -364,10 +401,6 @@ if (publishButton) {
 
 }
 
-
-/* =========================================================
-   初始化后台
-========================================================= */
 
 async function initializeDashboard() {
 
@@ -386,15 +419,17 @@ async function initializeDashboard() {
             "没有管理员权限，返回登录页面"
         );
 
+
         window.location.href =
             "/admin/index.html";
+
 
         return;
     }
 
 
     console.log(
-        "管理员验证成功"
+        "管理员验证成功，进入后台"
     );
 
 
@@ -414,10 +449,6 @@ function setupImageUploader() {
     }
 
 
-    /* =========================
-       添加图片按钮
-    ========================== */
-
     if (addImageButton) {
 
         addImageButton.addEventListener(
@@ -435,7 +466,7 @@ function setupImageUploader() {
 
 
 /* =========================================================
-   添加一个图片上传框
+   添加图片上传框
 ========================================================= */
 
 function addImageInput() {
@@ -519,7 +550,7 @@ function addImageInput() {
 
 
 /* =========================================================
-   重新编号图片
+   图片重新编号
 ========================================================= */
 
 function renumberImageInputs() {
@@ -542,7 +573,9 @@ function renumberImageInputs() {
 
 
             const label =
-                item.querySelector("label");
+                item.querySelector(
+                    "label"
+                );
 
 
             if (label) {
@@ -576,13 +609,15 @@ function renumberImageInputs() {
 
 
 /* =========================================================
-   获取所有图片输入框
+   获取图片输入框
 ========================================================= */
 
 function getImageInputs() {
 
     if (!imageUploadList) {
+
         return [];
+
     }
 
 
@@ -596,7 +631,7 @@ function getImageInputs() {
 
 
 /* =========================================================
-   上传图片
+   上传图片到 Supabase Storage
 ========================================================= */
 
 async function uploadImage(
@@ -605,13 +640,11 @@ async function uploadImage(
 ) {
 
     if (!file) {
+
         return null;
+
     }
 
-
-    /* =========================
-       生成唯一文件名
-    ========================== */
 
     const extension =
         file.name.includes(".")
@@ -638,10 +671,6 @@ async function uploadImage(
     );
 
 
-    /* =========================
-       上传到 images Storage
-    ========================== */
-
     const {
         error
     } =
@@ -654,6 +683,7 @@ async function uploadImage(
                 {
                     cacheControl:
                         "3600",
+
                     upsert:
                         false
                 }
@@ -667,15 +697,13 @@ async function uploadImage(
             error
         );
 
+
         throw new Error(
             `图片 ${imageNumber} 上传失败：${error.message}`
         );
+
     }
 
-
-    /* =========================
-       获取公开 URL
-    ========================== */
 
     const {
         data
@@ -693,6 +721,7 @@ async function uploadImage(
         throw new Error(
             `图片 ${imageNumber} 上传成功，但无法获取图片地址`
         );
+
     }
 
 
@@ -711,376 +740,382 @@ async function uploadImage(
    发布文章
 ========================================================= */
 
-publishButton?.addEventListener(
-    "click",
-    async function () {
+if (publishButton) {
 
-        const title =
-            document
-                .getElementById("title")
-                .value
-                .trim();
+    publishButton.addEventListener(
+        "click",
+        async function () {
 
-
-        const category =
-            document
-                .getElementById("category")
-                .value;
+            const title =
+                document
+                    .getElementById("title")
+                    .value
+                    .trim();
 
 
-        let content =
-            document
-                .getElementById("content")
-                .value
-                .trim();
+            const category =
+                document
+                    .getElementById("category")
+                    .value;
 
 
-        /* =========================
-           基础检查
-        ========================== */
+            let content =
+                document
+                    .getElementById("content")
+                    .value
+                    .trim();
 
-        if (!title) {
-
-            showPublishMessage(
-                "请输入文章标题",
-                true
-            );
-
-            return;
-        }
-
-
-        if (!content) {
-
-            showPublishMessage(
-                "请输入文章 HTML 内容",
-                true
-            );
-
-            return;
-        }
-
-
-        /* =========================
-           检查管理员
-        ========================== */
-
-        const isAdmin =
-            await checkAdmin();
-
-
-        if (!isAdmin) {
-
-            showPublishMessage(
-                "登录状态已失效，请重新登录",
-                true
-            );
-
-            setTimeout(
-                function () {
-
-                    window.location.href =
-                        "/admin/index.html";
-
-                },
-                1000
-            );
-
-            return;
-        }
-
-
-        publishButton.disabled =
-            true;
-
-        publishButton.textContent =
-            "发布中...";
-
-
-        showPublishMessage(
-            "正在处理文章，请稍候...",
-            false
-        );
-
-
-        try {
 
             /* =========================
-               找出 HTML 中使用的图片
+               基础检查
             ========================== */
 
-            const matches =
-                content.match(
-                    /\{\{IMAGE_(\d+)\}\}/g
-                ) || [];
+            if (!title) {
+
+                showPublishMessage(
+                    "请输入文章标题",
+                    true
+                );
+
+                return;
+
+            }
 
 
-            const requiredImages =
-                [
-                    ...new Set(
-                        matches.map(
-                            function (placeholder) {
+            if (!content) {
 
-                                const match =
-                                    placeholder.match(
-                                        /\d+/
-                                    );
+                showPublishMessage(
+                    "请输入文章 HTML 内容",
+                    true
+                );
 
-                                return match
-                                    ? match[0]
-                                    : null;
+                return;
 
-                            }
+            }
+
+
+            /* =========================
+               管理员检查
+            ========================== */
+
+            const isAdmin =
+                await checkAdmin();
+
+
+            if (!isAdmin) {
+
+                showPublishMessage(
+                    "登录状态已失效，请重新登录",
+                    true
+                );
+
+
+                setTimeout(
+                    function () {
+
+                        window.location.href =
+                            "/admin/index.html";
+
+                    },
+                    1000
+                );
+
+
+                return;
+
+            }
+
+
+            publishButton.disabled =
+                true;
+
+
+            publishButton.textContent =
+                "发布中...";
+
+
+            showPublishMessage(
+                "正在处理文章，请稍候...",
+                false
+            );
+
+
+            try {
+
+                /* =========================
+                   找出文章需要的图片
+                ========================== */
+
+                const matches =
+                    content.match(
+                        /\{\{IMAGE_(\d+)\}\}/g
+                    ) || [];
+
+
+                const requiredImages =
+                    [
+                        ...new Set(
+                            matches.map(
+                                function (
+                                    placeholder
+                                ) {
+
+                                    const match =
+                                        placeholder.match(
+                                            /\d+/
+                                        );
+
+
+                                    return match
+                                        ? match[0]
+                                        : null;
+
+                                }
+                            )
                         )
-                    )
-                ].filter(Boolean);
+                    ].filter(Boolean);
 
 
-            console.log(
-                "文章需要的图片:",
-                requiredImages
-            );
+                console.log(
+                    "文章需要的图片:",
+                    requiredImages
+                );
 
 
-            /* =========================
-               获取上传框
-            ========================== */
+                /* =========================
+                   获取图片上传框
+                ========================== */
 
-            const imageInputs =
-                getImageInputs();
-
-
-            /* =========================
-               建立图片 URL 映射
-            ========================== */
-
-            const imageUrls = {};
+                const imageInputs =
+                    getImageInputs();
 
 
-            /* =========================
-               上传所有已选择图片
-            ========================== */
-
-            for (
-                let i = 0;
-                i < imageInputs.length;
-                i++
-            ) {
-
-                const input =
-                    imageInputs[i];
+                const imageUrls = {};
 
 
-                const item =
-                    input.closest(
-                        ".image-upload-item"
-                    );
+                /* =========================
+                   上传图片
+                ========================== */
 
-
-                const number =
-                    item?.dataset.imageNumber;
-
-
-                if (
-                    number &&
-                    input.files &&
-                    input.files.length > 0
+                for (
+                    let i = 0;
+                    i < imageInputs.length;
+                    i++
                 ) {
 
-                    showPublishMessage(
-                        `正在上传图片 ${number}...`,
-                        false
-                    );
+                    const input =
+                        imageInputs[i];
 
 
-                    imageUrls[number] =
-                        await uploadImage(
-                            input.files[0],
-                            number
+                    const item =
+                        input.closest(
+                            ".image-upload-item"
+                        );
+
+
+                    const number =
+                        item?.dataset.imageNumber;
+
+
+                    if (
+                        number &&
+                        input.files &&
+                        input.files.length > 0
+                    ) {
+
+                        showPublishMessage(
+                            `正在上传图片 ${number}...`,
+                            false
+                        );
+
+
+                        imageUrls[number] =
+                            await uploadImage(
+                                input.files[0],
+                                number
+                            );
+
+                    }
+
+                }
+
+
+                /* =========================
+                   检查缺少的图片
+                ========================== */
+
+                for (
+                    const imageNumber
+                    of requiredImages
+                ) {
+
+                    if (
+                        !imageUrls[imageNumber]
+                    ) {
+
+                        throw new Error(
+                            `文章使用了 {{IMAGE_${imageNumber}}}，但没有上传对应的图片`
+                        );
+
+                    }
+
+                }
+
+
+                /* =========================
+                   替换图片占位符
+                ========================== */
+
+                for (
+                    const imageNumber
+                    of requiredImages
+                ) {
+
+                    const placeholder =
+                        new RegExp(
+                            `\\{\\{IMAGE_${imageNumber}\\}\\}`,
+                            "g"
+                        );
+
+
+                    content =
+                        content.replace(
+                            placeholder,
+                            imageUrls[imageNumber]
                         );
 
                 }
 
-            }
+
+                /* =========================
+                   第一张图片作为封面
+                ========================== */
+
+                const coverImage =
+                    imageUrls["1"] || "";
 
 
-            /* =========================
-               检查文章需要的图片
-            ========================== */
+                /* =========================
+                   保存文章
+                ========================== */
 
-            for (
-                const imageNumber
-                of requiredImages
-            ) {
+                showPublishMessage(
+                    "正在保存文章...",
+                    false
+                );
 
-                if (
-                    !imageUrls[imageNumber]
-                ) {
+
+                const {
+                    error
+                } =
+                    await supabase
+                        .from("articles")
+                        .insert(
+                            {
+                                title:
+                                    title,
+
+                                category:
+                                    category,
+
+                                cover_image:
+                                    coverImage,
+
+                                content:
+                                    content
+                            }
+                        );
+
+
+                if (error) {
+
+                    console.error(
+                        "文章保存失败:",
+                        error
+                    );
+
 
                     throw new Error(
-                        `文章使用了 {{IMAGE_${imageNumber}}}，但没有上传对应的图片`
+                        `文章保存失败：${error.message}`
                     );
 
                 }
 
-            }
+
+                /* =========================
+                   发布成功
+                ========================== */
+
+                showPublishMessage(
+                    "文章发布成功！",
+                    false
+                );
 
 
-            /* =========================
-               将 {{IMAGE_X}}
-               替换成真实图片 URL
-            ========================== */
+                /* =========================
+                   清空
+                ========================== */
 
-            for (
-                const imageNumber
-                of requiredImages
-            ) {
-
-                const placeholder =
-                    new RegExp(
-                        `\\{\\{IMAGE_${imageNumber}\\}\\}`,
-                        "g"
-                    );
+                document
+                    .getElementById("title")
+                    .value = "";
 
 
-                content =
-                    content.replace(
-                        placeholder,
-                        imageUrls[imageNumber]
-                    );
-
-            }
+                document
+                    .getElementById("content")
+                    .value = "";
 
 
-            /* =========================
-               获取封面图
-            ========================== */
-
-            const coverImage =
-                imageUrls["1"] || "";
+                imageUploadList.innerHTML =
+                    "";
 
 
-            /* =========================
-               写入 articles
-            ========================== */
-
-            showPublishMessage(
-                "正在保存文章...",
-                false
-            );
+                publishButton.textContent =
+                    "发布成功";
 
 
-            const {
-                error
-            } =
-                await supabase
-                    .from("articles")
-                    .insert(
-                        {
-                            title:
-                                title,
+                setTimeout(
+                    function () {
 
-                            category:
-                                category,
+                        publishButton.disabled =
+                            false;
 
-                            cover_image:
-                                coverImage,
+                        publishButton.textContent =
+                            "发布文章";
 
-                            content:
-                                content
-                        }
-                    );
+                    },
+                    3000
+                );
 
 
-            if (error) {
+            } catch (error) {
 
                 console.error(
-                    "文章保存失败:",
+                    "发布文章失败:",
                     error
                 );
 
-                throw new Error(
-                    `文章保存失败：${error.message}`
+
+                showPublishMessage(
+                    error.message ||
+                    "发布失败",
+                    true
                 );
+
+
+                publishButton.disabled =
+                    false;
+
+
+                publishButton.textContent =
+                    "发布文章";
 
             }
 
-
-            /* =========================
-               发布成功
-            ========================== */
-
-            showPublishMessage(
-                "文章发布成功！",
-                false
-            );
-
-
-            /* =========================
-               清空表单
-            ========================== */
-
-            document
-                .getElementById("title")
-                .value = "";
-
-
-            document
-                .getElementById("content")
-                .value = "";
-
-
-            imageUploadList.innerHTML =
-                "";
-
-
-            publishButton.textContent =
-                "发布成功";
-
-
-            /* =========================
-               3 秒后恢复按钮
-            ========================== */
-
-            setTimeout(
-                function () {
-
-                    publishButton.disabled =
-                        false;
-
-                    publishButton.textContent =
-                        "发布文章";
-
-                },
-                3000
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                "发布文章失败:",
-                error
-            );
-
-
-            showPublishMessage(
-                error.message ||
-                "发布失败",
-                true
-            );
-
-
-            publishButton.disabled =
-                false;
-
-            publishButton.textContent =
-                "发布文章";
-
         }
+    );
 
-    }
-);
+}
 
 
 /* =========================================================
@@ -1093,7 +1128,9 @@ function showPublishMessage(
 ) {
 
     if (!publishMessage) {
+
         return;
+
     }
 
 
@@ -1129,6 +1166,7 @@ if (logoutButton) {
             logoutButton.disabled =
                 true;
 
+
             logoutButton.textContent =
                 "退出中...";
 
@@ -1154,4 +1192,3 @@ if (logoutButton) {
     );
 
 }
-
