@@ -10,6 +10,13 @@ const SUPABASE_ANON_KEY =
 
 
 /* ==========================================
+   分页设置
+========================================== */
+
+const PAGE_SIZE = 12;
+
+
+/* ==========================================
    页面元素
 ========================================== */
 
@@ -34,6 +41,9 @@ const searchInput =
 const searchButton =
     document.getElementById("searchButton");
 
+const pagination =
+    document.getElementById("pagination");
+
 const categoryButtons =
     document.querySelectorAll(
         ".category-button"
@@ -48,6 +58,12 @@ let currentCategory = "全部";
 
 let currentSearch = "";
 
+let currentPage = 1;
+
+let totalNewsCount = 0;
+
+let totalPages = 0;
+
 
 /* ==========================================
    获取新闻
@@ -61,8 +77,21 @@ async function getNews() {
 
     emptyMessage.style.display = "none";
 
+    pagination.innerHTML = "";
+
 
     try {
+
+        /* ======================================
+           计算当前页需要的数据范围
+        ====================================== */
+
+        const from =
+            (currentPage - 1) * PAGE_SIZE;
+
+        const to =
+            from + PAGE_SIZE - 1;
+
 
         /* ======================================
            从 articles 表获取文章
@@ -103,7 +132,13 @@ async function getNews() {
 
 
         /* ======================================
-           请求 Supabase
+           真正的 Supabase 数据库分页
+           
+           Range:
+           0-11   = 第1页
+           12-23  = 第2页
+           24-35  = 第3页
+           ...
         ====================================== */
 
         const response =
@@ -117,7 +152,13 @@ async function getNews() {
                             SUPABASE_ANON_KEY,
 
                         Authorization:
-                            `Bearer ${SUPABASE_ANON_KEY}`
+                            `Bearer ${SUPABASE_ANON_KEY}`,
+
+                        Range:
+                            `${from}-${to}`,
+
+                        Prefer:
+                            "count=exact"
 
                     }
 
@@ -142,8 +183,85 @@ async function getNews() {
         }
 
 
+        /* ======================================
+           获取当前页新闻
+        ====================================== */
+
         const news =
             await response.json();
+
+
+        /* ======================================
+           获取符合当前筛选条件的新闻总数
+        ====================================== */
+
+        const contentRange =
+            response.headers.get(
+                "Content-Range"
+            );
+
+
+        if (contentRange) {
+
+            /*
+               Content-Range 可能类似：
+
+               0-11/37
+
+               这里的 37 就是总新闻数量。
+            */
+
+            const totalPart =
+                contentRange.split("/")[1];
+
+
+            if (
+                totalPart &&
+                totalPart !== "*"
+            ) {
+
+                totalNewsCount =
+                    parseInt(
+                        totalPart,
+                        10
+                    );
+
+            }
+
+        }
+
+
+        /* ======================================
+           计算总页数
+        ====================================== */
+
+        totalPages =
+            Math.ceil(
+                totalNewsCount / PAGE_SIZE
+            );
+
+
+        /* ======================================
+           如果当前页超出了实际页数
+           
+           例如删除新闻以后：
+           原来在第4页
+           结果现在只有3页
+           
+           自动回到最后一页
+        ====================================== */
+
+        if (
+            totalPages > 0 &&
+            currentPage > totalPages
+        ) {
+
+            currentPage =
+                totalPages;
+
+            return getNews();
+
+        }
 
 
         /* ======================================
@@ -154,17 +272,22 @@ async function getNews() {
 
 
         newsCount.textContent =
-            news.length;
+            totalNewsCount;
 
 
         /* ======================================
            没有新闻
         ====================================== */
 
-        if (news.length === 0) {
+        if (
+            news.length === 0 ||
+            totalNewsCount === 0
+        ) {
 
             emptyMessage.style.display =
                 "block";
+
+            pagination.innerHTML = "";
 
             return;
 
@@ -185,6 +308,13 @@ async function getNews() {
 
             }
         );
+
+
+        /* ======================================
+           创建分页
+        ====================================== */
+
+        createPagination();
 
 
     } catch (error) {
@@ -211,6 +341,9 @@ async function getNews() {
             </div>
 
         `;
+
+
+        pagination.innerHTML = "";
 
 
         console.error(
@@ -242,6 +375,10 @@ function createNewsCard(
 
     /* ======================================
        第一篇文章作为 Featured
+       
+       保持你原来的逻辑：
+       只有「全部」且没有搜索时，
+       当前页面的第一篇文章作为 Featured。
     ====================================== */
 
     if (
@@ -376,6 +513,405 @@ function createNewsCard(
 
 
 /* ==========================================
+   创建分页
+========================================== */
+
+function createPagination() {
+
+    pagination.innerHTML = "";
+
+
+    /* ======================================
+       没有分页时不显示
+       
+       例如：
+       新闻只有 12 篇
+       只需要一页
+    ====================================== */
+
+    if (totalPages <= 1) {
+
+        return;
+
+    }
+
+
+    /* ======================================
+       上一页
+    ====================================== */
+
+    const previousButton =
+        document.createElement("button");
+
+
+    previousButton.type =
+        "button";
+
+
+    previousButton.className =
+        "pagination-button pagination-prev";
+
+
+    previousButton.textContent =
+        "上一页";
+
+
+    previousButton.disabled =
+        currentPage === 1;
+
+
+    previousButton.addEventListener(
+        "click",
+        () => {
+
+            if (
+                currentPage <= 1
+            ) {
+
+                return;
+
+            }
+
+
+            currentPage--;
+
+            getNews();
+
+
+            scrollToNewsTop();
+
+        }
+    );
+
+
+    pagination.appendChild(
+        previousButton
+    );
+
+
+    /* ======================================
+       页码
+    ====================================== */
+
+    const pageNumbers =
+        document.createElement("div");
+
+
+    pageNumbers.className =
+        "pagination-numbers";
+
+
+    /*
+       为了避免新闻很多时分页按钮
+       无限变长，只显示有限页码。
+
+       例如当前第 5 页：
+
+       1 2 3 4 5 6 7 ... 20
+    */
+
+    const pages =
+        getPaginationPages();
+
+
+    pages.forEach(
+        page => {
+
+            if (page === "...") {
+
+                const ellipsis =
+                    document.createElement("span");
+
+
+                ellipsis.className =
+                    "pagination-ellipsis";
+
+
+                ellipsis.textContent =
+                    "...";
+
+
+                pageNumbers.appendChild(
+                    ellipsis
+                );
+
+
+                return;
+
+            }
+
+
+            const pageButton =
+                document.createElement("button");
+
+
+            pageButton.type =
+                "button";
+
+
+            pageButton.className =
+                "pagination-button";
+
+
+            pageButton.textContent =
+                page;
+
+
+            if (
+                page === currentPage
+            ) {
+
+                pageButton.classList.add(
+                    "active"
+                );
+
+                pageButton.setAttribute(
+                    "aria-current",
+                    "page"
+                );
+
+            }
+
+
+            pageButton.addEventListener(
+                "click",
+                () => {
+
+                    if (
+                        page === currentPage
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    currentPage =
+                        page;
+
+
+                    getNews();
+
+
+                    scrollToNewsTop();
+
+                }
+            );
+
+
+            pageNumbers.appendChild(
+                pageButton
+            );
+
+        }
+    );
+
+
+    pagination.appendChild(
+        pageNumbers
+    );
+
+
+    /* ======================================
+       下一页
+    ====================================== */
+
+    const nextButton =
+        document.createElement("button");
+
+
+    nextButton.type =
+        "button";
+
+
+    nextButton.className =
+        "pagination-button pagination-next";
+
+
+    nextButton.textContent =
+        "下一页";
+
+
+    nextButton.disabled =
+        currentPage === totalPages;
+
+
+    nextButton.addEventListener(
+        "click",
+        () => {
+
+            if (
+                currentPage >= totalPages
+            ) {
+
+                return;
+
+            }
+
+
+            currentPage++;
+
+            getNews();
+
+
+            scrollToNewsTop();
+
+        }
+    );
+
+
+    pagination.appendChild(
+        nextButton
+    );
+
+}
+
+
+/* ==========================================
+   获取分页页码
+========================================== */
+
+function getPaginationPages() {
+
+    const pages = [];
+
+
+    /*
+       页面很少时：
+
+       1 2 3 4 5
+    */
+
+    if (totalPages <= 7) {
+
+        for (
+            let i = 1;
+            i <= totalPages;
+            i++
+        ) {
+
+            pages.push(i);
+
+        }
+
+        return pages;
+
+    }
+
+
+    /*
+       当前页靠前：
+
+       1 2 3 4 5 ... 20
+    */
+
+    if (currentPage <= 4) {
+
+        pages.push(
+            1,
+            2,
+            3,
+            4,
+            5,
+            "...",
+            totalPages
+        );
+
+        return pages;
+
+    }
+
+
+    /*
+       当前页靠后：
+
+       1 ... 16 17 18 19 20
+    */
+
+    if (
+        currentPage >=
+        totalPages - 3
+    ) {
+
+        pages.push(
+            1,
+            "...",
+            totalPages - 4,
+            totalPages - 3,
+            totalPages - 2,
+            totalPages - 1,
+            totalPages
+        );
+
+        return pages;
+
+    }
+
+
+    /*
+       当前页在中间：
+
+       1 ... 7 8 9 ... 20
+    */
+
+    pages.push(
+        1,
+        "...",
+        currentPage - 1,
+        currentPage,
+        currentPage + 1,
+        "...",
+        totalPages
+    );
+
+
+    return pages;
+
+}
+
+
+/* ==========================================
+   滚动到新闻区域
+========================================== */
+
+function scrollToNewsTop() {
+
+    const heading =
+        document.querySelector(
+            ".page-heading"
+        );
+
+
+    if (!heading) {
+
+        return;
+
+    }
+
+
+    const headerOffset = 130;
+
+
+    const top =
+        heading.getBoundingClientRect().top +
+        window.scrollY -
+        headerOffset;
+
+
+    window.scrollTo(
+        {
+            top: Math.max(
+                0,
+                top
+            ),
+            behavior: "smooth"
+        }
+    );
+
+}
+
+
+/* ==========================================
    防止 HTML 注入
 ========================================== */
 
@@ -472,6 +1008,14 @@ categoryButtons.forEach(
                     button.dataset.category;
 
 
+                /*
+                   切换分类以后
+                   必须回到第一页
+                */
+
+                currentPage = 1;
+
+
                 /* ==========================
                    更新按钮状态
                 ========================== */
@@ -523,6 +1067,14 @@ function searchNews() {
 
     currentSearch =
         searchInput.value.trim();
+
+
+    /*
+       搜索条件发生变化以后
+       回到第一页
+    */
+
+    currentPage = 1;
 
 
     getNews();
